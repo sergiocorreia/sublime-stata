@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+misc/builtin_candidates.txt
+
 # C extensions
 *.so
 
