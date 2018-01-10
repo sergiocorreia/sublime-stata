@@ -2,7 +2,7 @@
 # https://www.sublimetext.com/docs/3/syntax.html
 # https://www.sublimetext.com/docs/3/scope_naming.html
 ---
-name: StataTest
+name: Stata
 file_extensions:
   - do
   - ado
@@ -117,7 +117,7 @@ contexts:
     - meta_scope: variable.parameter.global.stata
     - match: \s
       pop: true
-    - match: '(?=\S[^a-zA-Z0-9_])'
+    - match: '(?=[^a-zA-Z0-9_])'
       pop: true
  
   global-safe-macro:

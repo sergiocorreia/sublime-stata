@@ -1,0 +1,4 @@
+{
+    "selector": "source.stata",
+    "target": "stata_build"
+}
