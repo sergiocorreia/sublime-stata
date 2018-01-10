@@ -49,9 +49,9 @@ contexts:
     - match: \b(pr|pro|prog|progr|progra|program)\s+(dr|dro|drop)\s+(\w+)\b
       captures:
         1: support.constant.language.stata
-        2: support.constant.language.stata
+        2: storage.modifier
         3: entity.name.class
-    - match: \b(pr|pro|prog|progr|progra|program)\s+(def|define)?\s?(?!dr|drop|list|dir)(\w+)\s*
+    - match: \b(pr|pro|prog|progr|progra|program)\s+(def|defi|defin|define)?\b\s?(?!dr|drop|list|dir)(\w+)\s*
       captures:
         1: support.constant.language.stata
         2: storage.modifier
@@ -115,7 +115,9 @@ contexts:
   global-macro:
     - include: macro-begin
     - meta_scope: variable.parameter.global.stata
-    - match: (\s|[$/])
+    - match: \s
+      pop: true
+    - match: '(?=\S[^a-zA-Z0-9_])'
       pop: true
  
   global-safe-macro:
@@ -228,15 +230,22 @@ contexts:
 
   keywords:
     - match: (continue){{comma}}(break)
-      capture:
+      captures:
         1: keyword.control.flow.stata
         2: support.constant.language.stata punctuation.accessor.stata
         3: keyword.control.flow.stata
-    - match: (exit){{comma}}({{exit_options}}(?:\s+{{exit_options}})*)
-      capture:
+    - match: \b(exit)\b{{comma}}({{exit_options}}(?:\s+{{exit_options}})*)
+      captures:
         1: keyword.control.flow.stata
         2: support.constant.language.stata punctuation.accessor.stata
         3: keyword.control.flow.stata
+    - match: \b(qui|quie|quiet|quietly|noi|nois|noisi|noisil|noisily)\s+
+      captures:
+        1: keyword.control.flow.stata
+      set:
+        - include: statements
+
+
 
   simple-blocks:
     - match: \s*(cap|capt|captu|captur|capture|break|nobreak)\s+
@@ -247,7 +256,8 @@ contexts:
   optional-brackets:
     - match: '{'
       push: inner-block
-    - include: other-comments
+    - include: programs
+    - include: statements
     - match: $
       pop: true
 
@@ -257,6 +267,7 @@ contexts:
       pop: true
       scope: support.constant.language.stata punctuation.accessor.stata
     - include: statements
+    - include: programs
 
   complex-blocks:
     - include: ifcmd
@@ -264,17 +275,22 @@ contexts:
     - include: foreach
 
   ifcmd:
-    - match: \b(else if|if|else|while)\s+
+    - match: \b(else if|if|else|while)\s(\()
       captures:
         1: keyword.control.flow.stata
-      set: ifcmd-exp
-
-  ifcmd-exp:
-    - include: expressions
-    - match: \s*({)\s*$
+        2: punctuation.section.parens.begin meta.parens
+      push:
+        - include: expressions
+        - match: (\))
+          scope: punctuation.section.parens.end meta.parens
+          set: optional-brackets
+    - match: \b(else if|if|else|while)\b
       captures:
-        1: support.constant.language.stata punctuation.accessor.stata
-      set: inner-block
+        1: keyword.control.flow.stata
+      push:
+        - include: expressions
+        - match: '{'
+          set: inner-block
 
   forvalue:
     - match: \b(forv|forva|forval|forvalu|forvalue|forvalues)\s+(\w+)\s*(=)\s*
@@ -351,7 +367,7 @@ contexts:
 
   inner-commands:
     - include: expressions
-    - match: '$'
+    - match: $
       pop: true
 
 # ---------------------------------------------------------------------------
