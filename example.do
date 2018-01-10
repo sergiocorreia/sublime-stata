@@ -1,5 +1,37 @@
+gen x = asd("a")
+
+summarize 0 "A" 2 "C" /// 
+	1 "B"
+
+
+replace event = 9 if missing(ent_short_name) & missing(ent_long_name) & missing(ent_type) & ///
+					 missing(ent_status) & missing(ent_bad) & missing(ent_public) & ///
+					 missing(ent_spinout_from) & missing(ent_absorbed_by) & missing(ent_acquired_by)
+
+****************************************************************
+la def event 0 "Error" 1 "Initial definitions (Jan2001)" 2 "New FI" 3 "Acquisition with merger" /// 
+				  4 "Acquisition w/out merger" 5 "Change of name" 6 "Change in FI type" 7 "Change of status" ///
+				  8 "Spinoff" 9 "Misc. news" 
+
+
+la def event 0 "Error" 1 "Initial definitions (Jan2001)" 2 "New FI" 3 "Acquisition with merger" /// 
+				  4 "Acquisition w/out merger" 5 "Change of name" 6 "Change in FI type" 7 "Change of status" ///
+				  8 "Spinoff" 9 "Misc. news" 
+
+
 cap pr asd
+	asd
 end
+
+
+if (tm(2)==8 & 2>1 & 2) {
+	asd
+}
+
+
+if ("$foo" == "") {
+	asd
+}
 
 prog foobar
 	asd
