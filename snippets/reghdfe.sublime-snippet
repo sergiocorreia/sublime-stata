@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+reghdfe $1 , absorb($2)
+]]></content>
+	<tabTrigger>reghdfe</tabTrigger>
+	<scope>source.stata</scope>
+	<description>HDFE Regression</description>
+</snippet>

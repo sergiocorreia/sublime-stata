@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+di as ${2:text} "$1"
+]]></content>
+	<tabTrigger>display</tabTrigger>
+	<scope>source.stata</scope>
+	<description>Display</description>
+</snippet>

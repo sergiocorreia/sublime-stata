@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+use ${1}, clear
+]]></content>
+	<tabTrigger>use</tabTrigger>
+	<scope>source.stata</scope>
+	<description>Load dataset</description>
+</snippet>

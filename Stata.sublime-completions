@@ -1,0 +1,12 @@
+{
+	"scope": "source.stata",
+
+	"completions":
+	[
+		"stata",
+
+		{ "trigger": "sav", "contents": "save \"${1:file}.dta\", replace" },
+		{ "trigger": "run", "contents": "run \"${1:file}.do\""},
+		{ "trigger": "do", "contents": "do \"${1:file}.do\""}
+	]
+}

@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+collapse (${1:mean}) $2 , by($3) fast
+]]></content>
+	<tabTrigger>collapse</tabTrigger>
+	<scope>source.stata</scope>
+	<description>Collapse</description>
+</snippet>

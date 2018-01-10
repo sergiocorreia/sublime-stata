@@ -1,0 +1,14 @@
+<snippet>
+	<content><![CDATA[
+// -------------------------------------------------------------------------------------------------
+// $1
+// -------------------------------------------------------------------------------------------------
+
+
+]]></content>
+	<tabTrigger>header</tabTrigger>
+	<scope>source.stata</scope>
+	<description>Comment header</description>
+</snippet>
+
+

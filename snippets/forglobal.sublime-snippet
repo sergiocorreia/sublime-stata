@@ -1,0 +1,12 @@
+<snippet>
+	<content><![CDATA[
+foreach $1 of global $2 {
+	$3
+}
+]]></content>
+	<tabTrigger>forglobal</tabTrigger>
+	<scope>source.stata</scope>
+	<description>Foreach global</description>
+</snippet>
+
+

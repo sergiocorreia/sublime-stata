@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+*! dtapaths: ${1:../dta}
+*! json: ${2:stata-autocomplete.json}
+*! autoupdate: ${3:true}
+
+]]></content>
+	<tabTrigger>autocomplete</tabTrigger>
+	<scope>source.stata</scope>
+	<description>Metadata</description>
+</snippet>

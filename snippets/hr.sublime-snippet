@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+// -------------------------------------------------------------------------------------------------
+
+]]></content>
+	<tabTrigger>hr</tabTrigger>
+	<scope>source.stata</scope>
+	<description>Comment horizontal rule</description>
+</snippet>
+
+

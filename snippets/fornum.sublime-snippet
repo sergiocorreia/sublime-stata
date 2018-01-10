@@ -1,0 +1,12 @@
+<snippet>
+	<content><![CDATA[
+foreach ${1:num} of numlist $2 {
+	$3
+}
+]]></content>
+	<tabTrigger>fornum</tabTrigger>
+	<scope>source.stata</scope>
+	<description>Foreach numlist</description>
+</snippet>
+
+
