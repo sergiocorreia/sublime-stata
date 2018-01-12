@@ -1,0 +1,5 @@
+{
+	"ensure_newline_at_eof_on_save": true,
+	"variable_completions": false,
+	"stata_path": "C:/Bin/Stata14/StataMP-64.exe"
+}

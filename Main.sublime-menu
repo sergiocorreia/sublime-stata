@@ -1,0 +1,79 @@
+[
+    {
+        "caption": "Tools",
+        "mnemonic": "T",
+        "id": "tools",
+        "children":
+        [
+            {
+                "caption": "Stata",
+                "id": "stata",
+                "mnemonic": "S",
+                "children":
+                [
+                    {
+                        "caption": "Selection: Show Help on Stata",
+                        "command": "stata_help_external"
+                    },
+                    {
+                        "caption": "Selection: Show Help on Sublime Text",
+                        "command": "stata_help_internal"
+                    },
+                    { "caption": "-" },
+                    {
+                        "caption": "Change Stata Path",
+                        "command": "stata_update_executable_path"
+                    },
+                    {
+                        "caption": "Register Stata Automation",
+                        "command": "stata_register_automation"
+                    }                ]
+            }
+        ]
+    },
+    {
+        "caption": "Preferences",
+        "mnemonic": "n",
+        "id": "preferences",
+        "children":
+        [
+            {
+                "caption": "Package Settings",
+                "mnemonic": "P",
+                "id": "package-settings",
+                "children":
+                [
+                    {
+                        "caption": "Stata",
+                        "children":
+                        [
+                            {
+                                "caption": "Settings – Default",
+                                "command": "open_file",
+                                "args": {"file": "${packages}/Stata/Stata.sublime-settings"}
+                            },
+                            {
+                                "caption": "Settings – User",
+                                "command": "open_file",
+                                "args": {"file": "${packages}/User/Stata.sublime-settings"}
+                            },
+                            {
+                                "caption": "-"
+                            },
+                            {
+                                "caption": "Key Bindings – Default",
+                                "command": "open_file",
+                                "args": {"file": "${packages}/Stata/Default (Windows).sublime-keymap"}
+                            },
+                            {
+                                "caption": "Key Bindings – User",
+                                "command": "open_file",
+                                "args": {"file": "${packages}/User/Default (Windows).sublime-keymap"}
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

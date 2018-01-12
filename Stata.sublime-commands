@@ -1,0 +1,18 @@
+[
+    {
+        "caption": "Stata: Help (external)",
+        "command": "stata_help_external"
+    },
+    {
+        "caption": "Stata: Help (internal)",
+        "command": "stata_help_internal"
+    },
+    {
+        "caption": "Stata: Change the path of the executable",
+        "command": "stata_update_executable_path"
+    },
+    {
+        "caption": "Stata: Register Stata Automation",
+        "command": "stata_register_automation"
+    }
+]
