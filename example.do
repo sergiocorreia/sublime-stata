@@ -1,3 +1,6 @@
+// Constants
+
+
 gen x = asd("a")
 
 summarize 0 "A" 2 "C" /// 
@@ -17,6 +20,7 @@ la def event 0 "Error" 1 "Initial definitions (Jan2001)" 2 "New FI" 3 "Acquisiti
 la def event 0 "Error" 1 "Initial definitions (Jan2001)" 2 "New FI" 3 "Acquisition with merger" /// 
 				  4 "Acquisition w/out merger" 5 "Change of name" 6 "Change in FI type" 7 "Change of status" ///
 				  8 "Spinoff" 9 "Misc. news" 
+
 
 
 cap pr asd

@@ -1,0 +1,25 @@
+<!-- Syntax of symbolTransformation: s/«regexp»/«format»/ -->
+<!-- http://docs.sublimetext.info/en/latest/reference/symbols.html -->
+<!-- https://raw.githubusercontent.com/kkos/oniguruma/master/doc/RE -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Symbol List (Section Headers)</string>
+	<key>scope</key>
+	<string>source.stata entity.name.section</string>
+	<key>settings</key>
+	<dict>
+		<key>symbolTransformation</key>
+		<string>
+			s/(.+)/ ## $1/;
+			s/(--+)//;
+		</string>
+		<key>showInSymbolList</key>
+		<integer>1</integer>
+		<key>showInIndexedSymbolList</key>
+		<integer>1</integer>
+	</dict>
+</dict>
+</plist>

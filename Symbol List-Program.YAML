@@ -1,9 +1,0 @@
-# [PackageDev] target_format: plist, ext: tmPreferences
-# Syntax of symbolTransformation: s/«regexp»/«format»/
-#
-name: Symbol List
-scope: source.stata meta.program.stata
-settings:
-    showInSymbolList: 1
-    showInIndexedSymbolList: 1
-    symbolTransformation: "s/(?:pr|prog|program)\\s+(?:(?:def|define)\\s+)?([^,]+),*/PROG:  $1/"

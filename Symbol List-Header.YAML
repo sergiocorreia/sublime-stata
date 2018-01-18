@@ -1,9 +1,0 @@
-# [PackageDev] target_format: plist, ext: tmPreferences
-# Syntax of symbolTransformation: s/«regexp»/«format»/
-#
-name: Symbol List
-scope: source.stata comment.line.header.stata
-settings:
-    showInSymbolList: 1
-    showInIndexedSymbolList: 1
-    symbolTransformation: "s/^[^ ]+ (.{1,40}).*/BLOCK:  $1/"
