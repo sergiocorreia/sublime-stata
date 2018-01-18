@@ -1,0 +1,12 @@
+<snippet>
+	<content><![CDATA[
+if ($1) {
+	$2
+}
+]]></content>
+	<tabTrigger>if</tabTrigger>
+	<scope>source.stata</scope>
+	<description>If command</description>
+</snippet>
+
+

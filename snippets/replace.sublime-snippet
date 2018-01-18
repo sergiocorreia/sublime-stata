@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+replace ${1:VAR} = ${2:EXP} if ${3:COND}
+]]></content>
+	<tabTrigger>replace</tabTrigger>
+	<scope>source.stata</scope>scope>
+	<description>Replace variable</description>
+</snippet>

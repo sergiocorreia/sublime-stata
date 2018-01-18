@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[
-merge ${3:1}:${4:1} ${2} using ${1}, keep(${5:match}) ${6://} keepusing(${7}) nogen nolabel nonotes
+merge ${3:1}:${4:1} ${2} using "${1}", keep(${5:match}) ${6://} keepusing(${7}) nogen nolabel nonotes
 ]]></content>
 	<tabTrigger>merge</tabTrigger>
 	<scope>source.stata</scope>

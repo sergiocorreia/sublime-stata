@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[
-append using ${1} // , nolabel nonotes
+append using "${1}" // , nolabel nonotes
 ]]></content>
 	<tabTrigger>append</tabTrigger>
 	<scope>source.stata</scope>

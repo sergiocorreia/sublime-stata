@@ -1,8 +1,8 @@
 <snippet>
 	<content><![CDATA[
-reshape ${1:long} $2 , i($3) j($4)
+reshape ${1:long} $2 , i(${3:existing_id}) j(${4:new_id})
 ]]></content>
 	<tabTrigger>reshape</tabTrigger>
 	<scope>source.stata</scope>
-	<description>Reshape wide/long</description>
+	<description>Reshape long/wide</description>
 </snippet>

@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[
-gen ${1:float} ${2:NAME} = ${3:EXP}
+gen ${1:double} ${2:NAME} = ${3:EXP}
 ]]></content>
 	<tabTrigger>gen</tabTrigger>
 	<scope>source.stata</scope>
