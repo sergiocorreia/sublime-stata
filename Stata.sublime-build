@@ -1,4 +1,19 @@
 {
-    "selector": "source.stata",
-    "target": "stata_build"
+	"selector": "source.stata",
+	"target": "stata_exec",
+	"action": "do",
+	"file_path": "$file_path",
+	"project_path": "$project_path",
+	
+	"variants":
+	[
+		{
+			"name": "Trace",
+			"mode": "trace",
+		},
+		{
+			"name": "Clear all",
+			"mode": "cleanup",
+		},
+	]
 }

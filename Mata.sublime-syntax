@@ -61,7 +61,7 @@ contexts:
         5: punctuation.section.parens.begin meta.parens
       push:
         - meta_scope: meta.function.mata
-        - include: other-comments
+        - include: mata-comment
         - match: ','
           scope: punctuation.separator.mata
         #- match: '\|'
@@ -115,7 +115,7 @@ contexts:
         - meta_scope: comment.line.mata
         - match: $
           pop: true
-        - include: comments_in
+        #- include: comments_in
 
 # Based on the C syntax
 
@@ -153,6 +153,10 @@ contexts:
     - include: access-illegal
     - match: \.(?!\.)
       scope: punctuation.accessor.c
+
+  access-illegal:
+    - match: \.\.(?!\.)
+      scope: invalid.illegal.syntax.c
 
   parens:
     - match: \(
