@@ -1,3 +1,13 @@
+# TODO: write a Stata class
+
+# S = Stata
+# S.is_active()
+# S.open()
+# S.run(cmd)
+# S.run_many(cmds)
+# S.find_path()
+# ...
+
 # This file is named <stata_exec.py>, so the command is <stata_exec>
 # and the key class is <StataExecCommand>, with a <run> method
 
@@ -66,13 +76,11 @@ class StataExecCommand(sublime_plugin.WindowCommand):
 
         # Change current folder
         cwd = get_cwd(view)
-        if cwd:
-            prepare.append("cd " + cwd)
+        if cwd: prepare.append("cd " + cwd)
         
-        contents = contents.split('\n')
+        # Run requested command
         stata_automate(contents, prepare)
 
-        # Run requested command
         pass
 
 
@@ -149,17 +157,19 @@ def stata_automate(stata_commands, prepare_commands=None):
         launch_stata()
         for cmd in prepare_commands:
             rc = sublime.stata.DoCommand(cmd)
-            if rc: return
+            if rc:
+                #sublime.message_dialog(str(rc))
+                return
+            #sublime.message_dialog("OK")
 
-    dofile = os.path.join(tempfile.gettempdir(), 'sublime-stata.tmp')
-    with open(dofile,'w') as fh:
-        fh.write(ans)
+    # Create temporary do-file and run it
+    fn = os.path.join(tempfile.gettempdir(), 'sublime-stata.tmp')
+    with open(fn,'w') as fh:
+        fh.write(stata_commands)
         fh.close()
+        cmd = "do " + fn
         rc = sublime.stata.DoCommandAsync(cmd)
-
-
-    for cmd in stata_commands:
-        if rc: return
+        #if rc: return
         #if stata_debug: print('[CMD]', stata_command)
 
 
