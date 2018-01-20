@@ -66,7 +66,7 @@ class StataExecCommand(sublime_plugin.WindowCommand):
                 
             contents = ''.join(view.substr(sel) for sel in view.sel())
 
-        if contents[-1] != "\n":
+        if contents and contents[-1] != "\n":
             contents = contents + "\n"
 
         prepare = []
