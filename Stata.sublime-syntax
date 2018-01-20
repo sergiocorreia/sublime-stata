@@ -9,6 +9,7 @@ file_extensions:
   - ado
   - doh
   - mata
+first_line_match: ^\*!\ stata
 scope: source.stata
 
 # ---------------------------------------------------------------------------

@@ -1,7 +1,13 @@
 // Constants
 
-
+clear
+cls
+sysuse auto
+de
+su
 gen x = asd("a")
+
+more
 
 summarize 0 "A" 2 "C" /// 
 	1 "B"
@@ -68,7 +74,7 @@ cap asd asd
 {asd}
 ${asd}
 
-	net install derc, from("C:\Git\peru-sbs-rcd\stata")
+	net install derc, from("C:\Git\peru-sbs-rcd\`'stata")
 	pr drop _all	
 
 
@@ -142,3 +148,13 @@ local asd
 mata:
 	J(1,1,1)
 end
+
+exit
+
+
+
+sysuse auto, clear
+reg price weight gear
+su turn
+tab turn
+exit
