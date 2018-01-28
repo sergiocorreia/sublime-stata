@@ -11,6 +11,8 @@ scope: source.mata
 variables:
   identifier: \b[[:alpha:]_][[:alnum:]_]*\b # upper and lowercase
   control_keywords: 'if|else|for|while'
+  eltypes: transmorphic|numeric|real|complex|string|pointer|void
+  orgtypes: matrix|vector|rowvector|colvector|scalar
 
 # ---------------------------------------------------------------------------
 
@@ -28,6 +30,7 @@ contexts:
     - include: access
     - include: keywords
     - include: expressions
+    - include: mata-settings
 
   expressions:
     - include: parens
@@ -52,6 +55,21 @@ contexts:
         - meta_scope: meta.function.mata
         - include: mata-program-brackets
 
+    - match: ^({{eltypes}})\s+({{orgtypes}})\s([a-zA-Z:_]+)(\()
+      captures:
+        1: storage.type.function.mata
+        2: storage.type.function.mata
+        3: entity.name.function.mata meta.generic-name.mata
+        4: punctuation.section.parens.begin meta.parens
+      push: mata-function
+
+    - match: ^({{eltypes}})\s([a-zA-Z:_]+)(\()
+      captures:
+        1: storage.type.function.mata
+        2: entity.name.function.mata meta.generic-name.mata
+        3: punctuation.section.parens.begin meta.parens
+      push: mata-function
+
     - match: ^(`)([a-zA-Z]+)(\')\s([a-zA-Z:_]+)(\()
       captures:
         1: punctuation.section.group.begin
@@ -59,7 +77,9 @@ contexts:
         3: punctuation.section.group.end
         4: entity.name.function.mata meta.generic-name.mata
         5: punctuation.section.parens.begin meta.parens
-      push:
+      push: mata-function
+
+  mata-function:
         - meta_scope: meta.function.mata
         - include: mata-comment
         - match: ','
@@ -69,11 +89,28 @@ contexts:
         - match: \)
           scope: punctuation.section.parens.end meta.parens
           set: mata-program-brackets
+
+        # Match arguments: `Vector' xyz
         - match: (`)(\w+)(\')\s+(\w+)\b\s*(?=,|\))
           captures:
             1: punctuation.section.group.begin
             2: storage.type.function.mata #variable.parameter.local.stata
             3: punctuation.section.group.end
+            4: meta.function.parameters.mata variable.parameter.mata
+
+        # Match arguments: real scalar xyz
+        - match: ({{eltypes}})\s+({{orgtypes}})\s+(\w+)\b\s*(?=,|\))
+          captures:
+            1: storage.type.function.mata
+            2: storage.type.function.mata
+            3: meta.function.parameters.mata variable.parameter.mata
+
+        # Match class arguments
+        - match: (class)\s+(\w+)\s+({{orgtypes}})\s+(\w+)\b\s*(?=,|\))
+          captures:
+            1: storage.type.function.mata
+            2: storage.type.function.mata
+            3: storage.type.function.mata
             4: meta.function.parameters.mata variable.parameter.mata
 
   mata-program-brackets:
@@ -83,29 +120,34 @@ contexts:
 
   mata-inner-program:
     - match: '}'
+      scope: support.constant.language.mata punctuation.accessor.mata
       pop: true
+    - match: '{'
+      push: mata-inner-program
       scope: support.constant.language.mata punctuation.accessor.mata
     - include: statements
     - include: mata-declarations
 
   mata-declarations:
-    - match: ','
-      push:
-        - match: \b\w+\b
-          scope: entity.name.function.mata meta.generic-name.mata
-        - match: '$'
-          pop: true
-        - match: ','
-          scope: punctuation.separator.stata
-
-    - match: ^\s+(`)([a-zA-Z]+)(\')\s+(\w+)(?:(\()(\)))?
+    - match: ^\s+(`)([a-zA-Z]+)(\')\s+
       captures:
         1: punctuation.section.group.begin
         2: storage.type.function.mata
         3: punctuation.section.group.end
-        4: entity.name.function.mata meta.generic-name.mata
-        5: punctuation.section.parens.begin meta.parens
-        6: punctuation.section.parens.end meta.parens
+      push: mata-declarations-names
+
+    - match: ^\s+({{eltypes}})\s+({{orgtypes}})\s+
+      captures:
+        1: storage.type.function.mata
+        2: storage.type.function.mata
+      push: mata-declarations-names
+
+  mata-declarations-names:
+    - match: $
+      pop: true
+    - match: \w+
+      scope: entity.name.function.mata meta.generic-name.mata
+
 
   mata-comment: # // some comment
     - match: '(?:\s+|^)(//)(?:\s*|$)'
@@ -116,6 +158,13 @@ contexts:
         - match: $
           pop: true
         #- include: comments_in
+
+  mata-settings:
+    - match: ^\s*mata\s+query
+      scope: support.constant.language.mata
+      # mata set mataxyz ...
+    - match: ^(\s*mata\s+set\s+mata\w+)\s+(.+?)(?=\ //|$)
+      scope: support.constant.language.mata
 
 # Based on the C syntax
 

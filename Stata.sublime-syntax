@@ -182,7 +182,7 @@ contexts:
         - include: comments_in
 
   inline-comment: # // some comment
-    - match: '(?:\s+|^)(//)(?:\s+|$)'
+    - match: '(?:\s+|^)(//)(?:\s)*'
       captures:
         1: punctuation.definition.comment.begin.stata
       push:
