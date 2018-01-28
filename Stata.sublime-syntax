@@ -325,7 +325,7 @@ contexts:
         1: keyword.control.flow.stata
         2: variable.function.stata
         3: support.constant.language.stata punctuation.accessor.stata
-      set: forvalue-range
+      push: forvalue-range
 
   forvalue-range:
     - match: ({{value_or_macro}})(\()({{value_or_macro}})(\))({{value_or_macro}})\s+({)
@@ -336,14 +336,14 @@ contexts:
         4: support.constant.language.stata punctuation.accessor.stata
         5: constant.numeric.integer
         6: support.constant.language.stata punctuation.accessor.stata
-      set: inner-block
+      push: inner-block
     - match: ({{value_or_macro}})/({{value_or_macro}})\s+({)
       captures:
         1: constant.numeric.integer
         2: support.constant.language.stata punctuation.accessor.stata
         3: constant.numeric.integer
         6: support.constant.language.stata punctuation.accessor.stata
-      set: inner-block
+      push: inner-block
 
   foreach:
     - match: \b(foreach)\s+(\w+)\s+(of)\s+(loc|loca|local|glo|glob|globa|global)\s+(\w+)\s+({)
@@ -354,7 +354,7 @@ contexts:
         4: support.constant.language.stata punctuation.accessor.stata
         5: variable.function.stata
         6: support.constant.language.stata punctuation.accessor.stata
-      set: inner-block
+      push: inner-block
     - match: \b(foreach)\s+(\w+)\s+(of)\s+(var|varl|varli|varlis|varlist)\s+(\w+)\s+({)
       captures:
         1: keyword.control.flow.stata
@@ -363,7 +363,7 @@ contexts:
         4: keyword.control.flow.stata
         5: variable.other.readwrite
         6: support.constant.language.stata punctuation.accessor.stata
-      set: inner-block
+      push: inner-block
     - match: \b(foreach)\s+(\w+)\s+(in)\s+((?:\w+\s*)+)\s+({)
       captures:
         1: keyword.control.flow.stata
@@ -371,7 +371,7 @@ contexts:
         3: keyword.control.flow.stata
         4: variable.other.constant
         5: support.constant.language.stata punctuation.accessor.stata
-      set: inner-block
+      push: inner-block
 
 # ---------------------------------------------------------------------------
 
