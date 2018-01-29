@@ -113,10 +113,12 @@ contexts:
             3: storage.type.function.mata
             4: meta.function.parameters.mata variable.parameter.mata
 
+
   mata-program-brackets:
     - match: '{'
       scope: support.constant.language.mata punctuation.accessor.mata
       set: mata-inner-program
+
 
   mata-inner-program:
     - match: '}'
@@ -127,6 +129,7 @@ contexts:
       scope: support.constant.language.mata punctuation.accessor.mata
     - include: statements
     - include: mata-declarations
+
 
   mata-declarations:
     - match: ^\s+(`)([a-zA-Z]+)(\')\s+
@@ -142,11 +145,12 @@ contexts:
         2: storage.type.function.mata
       push: mata-declarations-names
 
+
   mata-declarations-names:
     - match: $
       pop: true
     - match: \w+
-      scope: entity.name.function.mata meta.generic-name.mata
+      scope: meta.generic-name.mata # entity.name.function.mata 
 
 
   mata-comment: # // some comment
