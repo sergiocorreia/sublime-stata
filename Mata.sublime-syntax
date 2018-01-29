@@ -147,6 +147,7 @@ contexts:
 
 
   mata-declarations-names:
+    - include: mata-comment
     - match: $
       pop: true
     - match: \w+
