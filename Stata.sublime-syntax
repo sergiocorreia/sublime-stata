@@ -328,6 +328,10 @@ contexts:
       push: forvalue-range
 
   forvalue-range:
+    - match: '}'
+      scope: invalid.illegal.stray-bracket-end
+    - match: '$'
+      scope: invalid.illegal.stray-bracket-end
     - match: ({{value_or_macro}})(\()({{value_or_macro}})(\))({{value_or_macro}})\s+({)
       captures:
         1: constant.numeric.integer
@@ -336,14 +340,14 @@ contexts:
         4: support.constant.language.stata punctuation.accessor.stata
         5: constant.numeric.integer
         6: support.constant.language.stata punctuation.accessor.stata
-      push: inner-block
-    - match: ({{value_or_macro}})/({{value_or_macro}})\s+({)
+      set: inner-block
+    - match: ({{value_or_macro}})\s*(\/)\s*({{value_or_macro}})\s+({)
       captures:
         1: constant.numeric.integer
         2: support.constant.language.stata punctuation.accessor.stata
         3: constant.numeric.integer
         6: support.constant.language.stata punctuation.accessor.stata
-      push: inner-block
+      set: inner-block
 
   foreach:
     - match: \b(foreach)\s+(\w+)\s+(of)\s+(loc|loca|local|glo|glob|globa|global)\s+(\w+)\s+({)
@@ -355,23 +359,31 @@ contexts:
         5: variable.function.stata
         6: support.constant.language.stata punctuation.accessor.stata
       push: inner-block
-    - match: \b(foreach)\s+(\w+)\s+(of)\s+(var|varl|varli|varlis|varlist)\s+(\w+)\s+({)
+    - match: \b(foreach)\s+(\w+)\s+(of)\s+(var|varl|varli|varlis|varlist)\s+
       captures:
         1: keyword.control.flow.stata
         2: variable.function.stata
         3: keyword.control.flow.stata
         4: keyword.control.flow.stata
-        5: variable.other.readwrite
-        6: support.constant.language.stata punctuation.accessor.stata
-      push: inner-block
-    - match: \b(foreach)\s+(\w+)\s+(in)\s+((?:\w+\s*)+)\s+({)
+      push: foreach-content
+    - match: \b(foreach)\s+(\w+)\s+(in)\s+
       captures:
         1: keyword.control.flow.stata
         2: variable.function.stata
         3: keyword.control.flow.stata
-        4: variable.other.constant
-        5: support.constant.language.stata punctuation.accessor.stata
-      push: inner-block
+      push: foreach-content
+
+  foreach-content:
+    - match: '}'
+      scope: invalid.illegal.stray-bracket-end
+    - match: '$'
+      scope: invalid.illegal.stray-bracket-end
+    - match: '{'
+      scope: support.constant.language.stata punctuation.accessor.stata
+      set: inner-block
+    - match: '\w(?:\w| )*'
+      scope: variable.other.readwrite
+    - include: macro-begin
 
 # ---------------------------------------------------------------------------
 
