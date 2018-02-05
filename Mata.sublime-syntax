@@ -55,12 +55,13 @@ contexts:
         - meta_scope: meta.function.mata
         - include: mata-program-brackets
 
-    - match: ^({{eltypes}})\s+({{orgtypes}})\s([a-zA-Z:_]+)(\()
+    - match: ^({{eltypes}})\s+({{orgtypes}})\s+(function\s+)?([a-zA-Z:_]+)(\()
       captures:
         1: storage.type.function.mata
         2: storage.type.function.mata
-        3: entity.name.function.mata meta.generic-name.mata
-        4: punctuation.section.parens.begin meta.parens
+        3: storage.type.function.mata
+        4: entity.name.function.mata meta.generic-name.mata
+        5: punctuation.section.parens.begin meta.parens
       push: mata-function
 
     - match: ^({{eltypes}})\s([a-zA-Z:_]+)(\()
@@ -70,13 +71,14 @@ contexts:
         3: punctuation.section.parens.begin meta.parens
       push: mata-function
 
-    - match: ^(`)([a-zA-Z]+)(\')\s([a-zA-Z:_]+)(\()
+    - match: ^(`)([a-zA-Z]+)(\')\s+(function\s+)?([a-zA-Z:_]+)(\()
       captures:
         1: punctuation.section.group.begin
         2: storage.type.function.mata
         3: punctuation.section.group.end
-        4: entity.name.function.mata meta.generic-name.mata
-        5: punctuation.section.parens.begin meta.parens
+        4: storage.type.function.mata
+        5: entity.name.function.mata meta.generic-name.mata
+        6: punctuation.section.parens.begin meta.parens
       push: mata-function
 
   mata-function:

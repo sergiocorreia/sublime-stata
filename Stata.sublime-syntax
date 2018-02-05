@@ -173,7 +173,7 @@ contexts:
     - match: '(?:\s+|^)(//)(?!/)'
       captures:
         1: punctuation.definition.comment.begin.stata
-      set:
+      push:
         - meta_scope: comment.line.stata.inline
         - match: $
           pop: true
