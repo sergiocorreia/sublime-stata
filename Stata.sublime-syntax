@@ -117,14 +117,16 @@ contexts:
 
   local-macro:
     - include: macro-begin
-    - meta_scope: variable.parameter.local.stata
+    - match: \w+
+      scope: variable.parameter.local.stata
     - match: (?<!\\)[']
       scope: punctuation.section.group.end
       pop: true
 
   global-macro:
     - include: macro-begin
-    - meta_scope: variable.parameter.global.stata
+    - match: \w+
+      scope: variable.parameter.global.stata
     - match: \s
       pop: true
     - match: '(?=[^a-zA-Z0-9_])'
