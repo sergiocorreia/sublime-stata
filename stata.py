@@ -158,7 +158,7 @@ class Stata(object):
         if not commands.endswith('\n'):
             commands = commands + '\n'
 
-        with open(self.temp_fn,'w') as fh:
+        with open(self.temp_fn, mode='w', encoding='utf-8') as fh:
             fh.write(commands)
 
         cmd = "do " + self.temp_fn
