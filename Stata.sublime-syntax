@@ -397,6 +397,8 @@ contexts:
     - match: '}'
       scope: invalid.illegal.stray-bracket-end
 
+    - include: strings
+
   inner-commands:
     - meta_scope: inner-commands
     - include: expressions
@@ -406,8 +408,8 @@ contexts:
 # ---------------------------------------------------------------------------
 
   strings:
-    - include: double-quote-string
     - include: compound-quote-string
+    - include: double-quote-string
 
   double-quote-string:
     - match: '"'
