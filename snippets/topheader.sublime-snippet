@@ -1,0 +1,13 @@
+<snippet>
+	<content><![CDATA[
+* ===========================================================================
+* $1
+* ===========================================================================
+
+]]></content>
+	<tabTrigger>topheader</tabTrigger>
+	<scope>source.stata</scope>
+	<description>Top header</description>
+</snippet>
+
+
