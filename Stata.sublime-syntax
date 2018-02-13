@@ -22,6 +22,7 @@ variables:
   github_commands: (?:reghdfe|ivreghdfe|ppmlhdfe|estgaze|mise_en_place|doa|derc|kosi)
   ftools_commands: (?:ftools|fcollapse|fsort|fisid|fegen|fegen_group|join|fmerge|flevelsof|local_inlist|ms_compile_mata|ms_get_version|ms_fvunab|ms_fvstrip|ms_parse_absvars|ms_parse_varlist|ms_parse_vce|ftab)
   gtools_commands: (?:_gtools_internal|gcollapse|gcontract|gegen|fasterxtile|gquantiles|gunique|gdistinct|glevelsof|gtop|gtoplevelsof|gisid|hashsort|gtools)
+  frb_commands: (?:explain|findy9c|addvar|wdm)
 
   variable: '[A-Za-z_][A-Za-z_0-9]*'
   number: \b\d+(\.\d+)?\b
