@@ -3,6 +3,6 @@
 use ${2} using ${1}, clear
 ]]></content>
 	<tabTrigger>uselong</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>Load dataset</description>
 </snippet>

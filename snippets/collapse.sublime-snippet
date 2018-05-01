@@ -3,6 +3,6 @@
 collapse (${1:mean}) $2 , by($3) fast
 ]]></content>
 	<tabTrigger>collapse</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>Collapse</description>
 </snippet>

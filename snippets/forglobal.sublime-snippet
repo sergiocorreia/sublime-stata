@@ -5,7 +5,7 @@ foreach $1 of global $2 {
 }
 ]]></content>
 	<tabTrigger>forglobal</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>Foreach global</description>
 </snippet>
 

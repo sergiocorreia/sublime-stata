@@ -3,6 +3,6 @@
 di as ${2:text} "$1"
 ]]></content>
 	<tabTrigger>display</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>Display</description>
 </snippet>

@@ -3,6 +3,6 @@
 replace ${1:VAR} = ${2:EXP} if ${3:COND}
 ]]></content>
 	<tabTrigger>replace</tabTrigger>
-	<scope>source.stata</scope>scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>scope>
 	<description>Replace variable</description>
 </snippet>

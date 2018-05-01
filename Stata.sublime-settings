@@ -1,5 +1,6 @@
 {
 	"ensure_newline_at_eof_on_save": true,
 	"variable_completions": false,
-	"stata_path": ""
+	"stata_path": "",
+	"auto_complete_triggers" : [ {"selector": "source.mata - string.quoted - string.quoted.double.stata", "characters": "."} ]
 }

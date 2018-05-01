@@ -5,7 +5,7 @@ forval ${1:i} = 1/`$2' {
 }
 ]]></content>
 	<tabTrigger>forv</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>Forvalue</description>
 </snippet>
 

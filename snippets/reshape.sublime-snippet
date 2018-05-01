@@ -3,6 +3,6 @@
 reshape ${1:long} $2 , i(${3:existing_id}) j(${4:new_id})
 ]]></content>
 	<tabTrigger>reshape</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>Reshape long/wide</description>
 </snippet>

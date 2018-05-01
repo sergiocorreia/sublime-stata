@@ -26,7 +26,7 @@ variables:
 
   variable: '[A-Za-z_][A-Za-z_0-9]*'
   number: \b\d+(\.\d+)?\b
-  local_start: '(loc|loca|local)\s+(\w{1,31})'
+  #local_start: '(loc|loca|local)\s+(\w{1,31})'
   value_or_macro: (?:\d+|[`]\w+\')
   value_or_complex_macro: (?:\d+|[`]\w+\'|[`]=[cer]\(\w+\)\')
 
@@ -83,8 +83,8 @@ contexts:
     - meta_scope: meta.program.stata
     - match: '^\s*(end)\s*$'
       captures:
-        1: storage.type.program.stata
-      set: main
+        1: storage.type.function.stata storage.type.program.stata
+      pop: true
     - include: statements
 # ---------------------------------------------------------------------------
 
@@ -214,39 +214,79 @@ contexts:
 # ---------------------------------------------------------------------------
 
   locals:
-    - include: local-equal
-    - include: local-extended
-    - include: local-simple
-
-  local-equal:
-    - match: '{{local_start}}\s?(=)\s?'
+    #- match: '\b(loc|loca|local)[ \t]+'
+    - match: '(loc|loca|local)'
       captures:
         1: support.constant.language.stata
-        2: variable.function.stata meta.function-call.stata
-        3: support.constant.language.stata punctuation.accessor.stata
-      push: local-contents # expression
+      push:
+        - meta_scope: meta.local.stata
+        - include: locals-inner
 
-  local-extended:
-    - match: '{{local_start}}\s+(:)\s+(\w+)\b'
+  locals-inner:
+    - include: locals-equal
+    - include: locals-colon
+    - include: locals-increment
+    - include: locals-invalid
+    - include: locals-standard
+
+  locals-equal:
+    - match: '\s*(\w{1,31})\s?(=)\s?'
       captures:
-        1: support.constant.language.stata
-        2: variable.function.stata
-        3: support.constant.language.stata punctuation.accessor.stata
-        4: storage.type.function.stata
-      push: local-contents # extended local
+        1: variable.function.stata meta.function-call.stata
+        2: support.constant.language.stata punctuation.accessor.stata
+      push:
+        - match: $
+          pop: true
+        - include: expressions
 
-  local-simple:
-    - match: '{{local_start}}'
+  locals-colon:
+    - match: '\s*(\w{1,31})\s+(:)'
       captures:
-        1: support.constant.language.stata
-        2: variable.function.stata
-      push: local-contents
+        1: variable.function.stata meta.function-call.stata
+        2: support.constant.language.stata punctuation.accessor.stata
+      push:
+        - meta_scope:  meta.local.extended.stata
+        - include: locals-extended
 
-  local-contents:
-    - include: expressions
-    - meta_scope: meta.local.stata
+  locals-extended:
     - match: $
       pop: true
+    - include: expressions
+
+  locals-old-colon:
+    - match: '\s*(\w{1,31})\s+(:)\s+([a-z()_0-9]+)\b'
+      captures:
+        1: variable.function.stata meta.function-call.stata
+        2: support.constant.language.stata punctuation.accessor.stata
+        3: storage.type.function.stata
+      push:
+        - match: $
+          pop: true
+        - include: expressions
+
+  locals-increment:
+    - match: '\s*([+]{2}|[-]{2})(\w{1,31})'
+      captures:
+        1: support.constant.language.stata keyword.operator.arithmetic.stata
+        2: variable.function.stata meta.function-call.stata
+    - match: $
+      pop: true
+    - include: other-comments
+
+  locals-invalid:
+    - match: '\s*(\w{1,31})\+\+'
+      scope: invalid.illegal.stray-bracket-end
+    - match: $
+      pop: true
+
+  locals-standard:
+    - match: '\s*([_a-z]\w{0,30})\s'
+      captures:
+        1: variable.function.stata meta.function-call.stata
+      push:
+        - match: $
+          pop: true
+        - include: expressions
 
 # ---------------------------------------------------------------------------
 

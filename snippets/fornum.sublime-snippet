@@ -5,7 +5,7 @@ foreach ${1:num} of numlist $2 {
 }
 ]]></content>
 	<tabTrigger>fornum</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>Foreach numlist</description>
 </snippet>
 

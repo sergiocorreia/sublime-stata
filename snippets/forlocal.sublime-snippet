@@ -5,7 +5,7 @@ foreach $1 of local $2 {
 }
 ]]></content>
 	<tabTrigger>forlocal</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>Foreach local</description>
 </snippet>
 

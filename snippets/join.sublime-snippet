@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+join ${3:vars}, from("${1:`fn'}") by(${2:id}) ${4://} keep(${5:master match}) assert(${6:match}) unique nogen nolabel nonotes
+]]></content>
+	<tabTrigger>join</tabTrigger>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
+	<description>ftools alternative to merge</description>
+</snippet>

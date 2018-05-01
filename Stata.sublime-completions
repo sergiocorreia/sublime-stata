@@ -1,5 +1,5 @@
 {
-	"scope": "source.stata",
+	"scope": "source.stata - string",
 
 	"completions":
 	[

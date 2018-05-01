@@ -4,7 +4,7 @@
 
 ]]></content>
 	<tabTrigger>hr</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>Comment horizontal rule</description>
 </snippet>
 

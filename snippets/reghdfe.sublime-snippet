@@ -3,6 +3,6 @@
 reghdfe $1 , absorb($2)
 ]]></content>
 	<tabTrigger>reghdfe</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>HDFE Regression</description>
 </snippet>

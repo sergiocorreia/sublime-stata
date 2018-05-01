@@ -8,6 +8,6 @@ program define ${1:Name}
 end
 ]]></content>
 	<tabTrigger>prog</tabTrigger>
-	<scope>source.stata</scope>scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>scope>
 	<description>Program</description>description
 </snippet>

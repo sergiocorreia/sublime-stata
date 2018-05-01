@@ -3,6 +3,6 @@
 append using "${1}" // , nolabel nonotes
 ]]></content>
 	<tabTrigger>append</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>Append datasets</description>
 </snippet>

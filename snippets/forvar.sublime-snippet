@@ -5,7 +5,7 @@ foreach ${1:var} of varlist `$2' {
 }
 ]]></content>
 	<tabTrigger>forvar</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>Foreach varlist</description>
 </snippet>
 

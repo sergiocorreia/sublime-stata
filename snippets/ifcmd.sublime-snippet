@@ -5,7 +5,7 @@ if ($1) {
 }
 ]]></content>
 	<tabTrigger>if</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>If command</description>
 </snippet>
 

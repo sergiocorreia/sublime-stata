@@ -6,7 +6,7 @@
 
 ]]></content>
 	<tabTrigger>topheader</tabTrigger>
-	<scope>source.stata</scope>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
 	<description>Top header</description>
 </snippet>
 
