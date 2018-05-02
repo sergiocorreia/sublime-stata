@@ -215,7 +215,7 @@ contexts:
 
   locals:
     #- match: '\b(loc|loca|local)[ \t]+'
-    - match: '(loc|loca|local)'
+    - match: '\b(local|loca|loc)\b'
       captures:
         1: support.constant.language.stata
       push:
@@ -230,7 +230,7 @@ contexts:
     - include: locals-standard
 
   locals-equal:
-    - match: '\s*(\w{1,31})\s?(=)\s?'
+    - match: '\s*(\w{1,31})\s*(=)\s*'
       captures:
         1: variable.function.stata meta.function-call.stata
         2: support.constant.language.stata punctuation.accessor.stata
@@ -256,17 +256,6 @@ contexts:
       captures:
         1: support.constant.language.stata
     - include: expressions
-
-  locals-old-colon:
-    - match: '\s*(\w{1,31})\s+(:)\s+([a-z()_0-9]+)\b'
-      captures:
-        1: variable.function.stata meta.function-call.stata
-        2: support.constant.language.stata punctuation.accessor.stata
-        3: storage.type.function.stata
-      push:
-        - match: $
-          pop: true
-        - include: expressions
 
   locals-increment:
     - match: '\s*([+]{2}|[-]{2})(\w{1,31})'
