@@ -251,6 +251,10 @@ contexts:
   locals-extended:
     - match: $
       pop: true
+    - match: '\b(list)\s+'
+      scope: meta.local.list.stata
+      captures:
+        1: support.constant.language.stata
     - include: expressions
 
   locals-old-colon:

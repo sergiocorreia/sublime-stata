@@ -1,12 +1,10 @@
 {
-	"scope": "source.stata - string",
+	"scope": "source.stata - string - meta.local",
 
 	"completions":
 	[
-		"stata",
-
-		{ "trigger": "sav", "contents": "save \"${1:file}.dta\", replace" },
-		{ "trigger": "run", "contents": "run \"${1:file}.do\""},
-		{ "trigger": "do", "contents": "do \"${1:file}.do\""}
+		{ "trigger": "savefile\tSave file", "contents": "save \"${1:file}.dta\", replace" },
+		{ "trigger": "dofile\tRun noisily", "contents": "do \"${1:file}.do\""},
+		{ "trigger": "runfile\tRun silently", "contents": "run \"${1:file}.do\""}
 	]
 }

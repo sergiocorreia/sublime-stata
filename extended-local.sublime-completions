@@ -1,0 +1,31 @@
+{
+	"scope": "meta.local.extended.stata - meta.local.list.stata",
+
+	"completions":
+	[
+		{ "trigger": "type\tStorage type", "contents": "type ${1:varname}"},
+		{ "trigger": "format\tVariable format", "contents": "format ${1:varname}"},
+		{ "trigger": "value label\tValue label of var", "contents": "value label ${1:varname}"},
+		{ "trigger": "var label\tVariable label", "contents": "var label ${1:varname}"},
+		{ "trigger": "data label\tDataset label", "contents": "data label"}, 
+		{ "trigger": "sortedby\tSorted-by variables", "contents": "sortedby"},
+		{ "trigger": "label\tValue of nth label", "contents": "label ${1:vlname} ${2:#} ${3://} , strict"},
+		{ "trigger": "label\tValue of nth label (indirect)", "contents": "label (${1:varname}) ${2:#} ${3://} , strict"},
+		{ "trigger": "char\tVariable characteristics", "contents": "char ${1:var}[${2:}]"},
+		
+		{ "trigger": "word count\t# of words in string", "contents": "word count `${1:loc}'"},
+		{ "trigger": "word #\tn-th word of string", "contents": "word ${2:#} of `${1:loc}'"},
+		{ "trigger": "subinstr\treplace string", "contents": "subinstr loc ${1:loc} \"${2:from}\" \"${3:to}\" // , all word count(local locname)"},
+		{ "trigger": "list", "contents": "list "},
+		
+		{ "trigger": "directory\tDirectory contents", "contents": "dir \"${1:dirname}\" ${2:files} \"${3:*}\", respectcase"},
+		{ "trigger": "environment\tOS environment info", "contents": "environment ${1:name}"},
+		
+		{ "trigger": "rownames\tMatrix row names", "contents": "rownames ${1:matrixname}"},
+		{ "trigger": "colnames\tMatrix col names", "contents": "colnames ${1:matrixname}"},
+		{ "trigger": "rowfullnames\tMatrix full row names", "contents": "rowfullnames ${1:matrixname}"},
+		{ "trigger": "colfullnames\tMatrix full col names", "contents": "colfullnames ${1:matrixname}"},
+		{ "trigger": "roweq\tMatrix row equations", "contents": "roweq ${1:matrixname}"},
+		{ "trigger": "coleq\tMatrix col equations", "contents": "coleq ${1:matrixname}"}
+	]
+}

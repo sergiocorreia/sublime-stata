@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+insheet ${2:} using "${1:`fn'}", clear tab names double
+]]></content>
+	<tabTrigger>insheet</tabTrigger>
+	<scope>source.stata - string - meta.local - inner-commands</scope>
+	<description>Read tabular text data</description>
+</snippet>

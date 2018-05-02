@@ -2,7 +2,7 @@
 	<content><![CDATA[
 use ${1}, clear
 ]]></content>
-	<tabTrigger>use</tabTrigger>
-	<scope>source.stata - string - meta.local - inner-commands</scope>
+	<tabTrigger>use-short</tabTrigger>
+	<scope>source.stata - string - meta.local</scope>
 	<description>Load dataset</description>
 </snippet>
