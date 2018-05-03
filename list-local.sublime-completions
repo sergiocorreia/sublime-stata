@@ -11,12 +11,12 @@
 
 		{ "trigger": "sizeof\tCount elements", "contents": "sizeof ${1:macname}"},
 		{ "trigger": "posof\tFind element", "contents": "posof \"${1:element}\" in ${2:macname}"},
-		
-		{ "trigger": "list-or\tOR operator", "contents": "${1:macname | ${2:macname}"},
-		{ "trigger": "list-and\tAND operator", "contents": "${1:macname & ${2:macname}"},
-		{ "trigger": "list-diff\tDIFF operator", "contents": "${1:macname - ${2:macname}"},
-		{ "trigger": "list-in\tIN operator", "contents": "${1:macname in ${2:macname}"},
-		{ "trigger": "list-equal\tEQUAL operator", "contents": "${1:macname == ${2:macname}"},
-		{ "trigger": "list-identical\tIDENTICAL operator", "contents": "${1:macname === ${2:macname}"}
+
+		{ "trigger": "list_or\tOR operator", "contents": "${1:macname} | ${2:macname}"},
+		{ "trigger": "list_and\tAND operator", "contents": "${1:macname} & ${2:macname}"},
+		{ "trigger": "list_diff\tDIFF operator", "contents": "${1:macname} - ${2:macname}"},
+		{ "trigger": "list_in\tIN operator", "contents": "${1:macname} in ${2:macname}"},
+		{ "trigger": "list_equal\tEQUAL operator", "contents": "${1:macname} == ${2:macname}"},
+		{ "trigger": "list_identical\tIDENTICAL operator", "contents": "${1:macname} === ${2:macname}"}
 	]
 }

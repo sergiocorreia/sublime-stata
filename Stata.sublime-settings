@@ -2,5 +2,10 @@
 	"ensure_newline_at_eof_on_save": true,
 	"variable_completions": false,
 	"stata_path": "",
-	"auto_complete_triggers" : [ {"selector": "source.mata - string.quoted - string.quoted.double.stata", "characters": "."} ]
+	"auto_complete_triggers" :
+	[
+		{"selector": "source.mata - string.quoted - string.quoted.double.stata", "characters": "."},
+		{"selector": "meta.local.stata", "characters": ": "},
+		{"selector": "meta.local.extended.stata", "characters": "list"}
+	]
 }

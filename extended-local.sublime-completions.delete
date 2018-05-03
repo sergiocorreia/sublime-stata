@@ -1,5 +1,5 @@
 {
-	"scope": "meta.local.extended.stata - meta.local.list.stata",
+	"scope": "meta.local.extended.stata.remove - meta.local.list.stata",
 
 	"completions":
 	[

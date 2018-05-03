@@ -6,6 +6,16 @@
 	//	{ "keys": ["ctrl+break"], "command": "cancel_build" },
 
 	// Autocomplete with the variables of only the relevant dataset, when doing use, merge, etc.
+	
+	{ "keys": [":"], "command": "autocomplete_colon", "context":
+		[
+			{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true },
+			{ "key": "selector", "operator": "equal", "operand": "meta.local.stata", "match_all": true },
+			{ "key": "preceding_text", "operator": "not_regex_contains", "operand": " $" }
+		]
+
+	},
+
 	{ "keys": ["ctrl+shift+space"], "command": "stata_autocomplete_var", "args":
 		{"menu": "filter"},
 		"context":
