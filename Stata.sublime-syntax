@@ -474,6 +474,8 @@ contexts:
     - include: numbers
     - include: operators
     - include: strings
+    - match: '\s+'
+      scope: meta.space.stata
 
   numbers: # Based on python's syntax
     # floating point

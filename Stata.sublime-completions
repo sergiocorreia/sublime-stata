@@ -1,5 +1,5 @@
 {
-	"scope": "source.stata - string - meta.local",
+	"scope": "source.stata - string - meta.local - inner-commands",
 
 	"completions":
 	[
