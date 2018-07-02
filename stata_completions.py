@@ -47,7 +47,7 @@ class StataCompletions(sublime_plugin.EventListener):
         if view.match_selector(locations[0], "comment"):
             return []
 
-        if view.match_selector(locations[0], "source.mata"):
+        if view.match_selector(locations[0], "source.mata") or True:
             return []
 
         # If there's multiple cursors, we can't offer completions.

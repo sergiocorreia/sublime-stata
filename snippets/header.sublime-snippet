@@ -4,7 +4,7 @@
 // $1
 // --------------------------------------------------------------------------
 
-
+	
 ]]></content>
 	<tabTrigger>header</tabTrigger>
 	<scope>source.stata - string - meta.local - inner-commands</scope>

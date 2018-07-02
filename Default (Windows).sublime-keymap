@@ -10,7 +10,7 @@
 	{ "keys": [":"], "command": "autocomplete_colon", "context":
 		[
 			{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true },
-			{ "key": "selector", "operator": "equal", "operand": "meta.local.stata", "match_all": true },
+			{ "key": "selector", "operator": "equal", "operand": "meta.local.stata - string", "match_all": true },
 			{ "key": "preceding_text", "operator": "not_regex_contains", "operand": " $" }
 		]
 

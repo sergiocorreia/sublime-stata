@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[
-reghdfe $1 , absorb($2)
+reghdfe $1 , absorb($2) vce(cluster $3)
 ]]></content>
 	<tabTrigger>reghdfe</tabTrigger>
 	<scope>source.stata - string - meta.local - inner-commands</scope>
