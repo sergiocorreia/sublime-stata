@@ -27,8 +27,8 @@ variables:
   variable: '[A-Za-z_][A-Za-z_0-9]*'
   number: \b\d+(\.\d+)?\b
   #local_start: '(loc|loca|local)\s+(\w{1,31})'
-  value_or_macro: (?:\d+|[`]\w+\')
-  value_or_complex_macro: (?:\d+|[`]\w+\'|[`]=[cer]\(\w+\)\')
+  value_or_macro: (?:\d+|[`]\w+\'|\$\w+)
+  value_or_complex_macro: (?:\d+|[`]\w+\'|[`]=[cer]\(\w+\)\'|\$\w+)
 
   types: (?:byte|int|long|float|double|str1|str2|str3|str4|str5|strL)
   comma: \s*(,)\s*
