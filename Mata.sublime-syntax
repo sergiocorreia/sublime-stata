@@ -107,6 +107,12 @@ contexts:
             2: storage.type.function.mata
             3: meta.function.parameters.mata variable.parameter.mata
 
+        # Match arguments: scalar xyz (where default is -real-)
+        - match: ({{orgtypes}})\s+(\w+)\b\s*(?=,|\))
+          captures:
+            1: storage.type.function.mata
+            2: meta.function.parameters.mata variable.parameter.mata
+
         # Match class arguments
         - match: (class)\s+(\w+)\s+({{orgtypes}})\s+(\w+)\b\s*(?=,|\))
           captures:

@@ -26,7 +26,7 @@ variables:
 
   variable: '[A-Za-z_][A-Za-z_0-9]*'
   number: \b\d+(\.\d+)?\b
-  #local_start: '(loc|loca|local)\s+(\w{1,31})'
+  #local_start: '(loc|loca|local)\s+(\w{1,31}|0)'
   value_or_macro: (?:\d+|[`]\w+\'|\$\w+)
   value_or_complex_macro: (?:\d+|[`]\w+\'|[`]=[cer]\(\w+\)\'|\$\w+)
 
@@ -230,7 +230,7 @@ contexts:
     - include: locals-standard
 
   locals-equal:
-    - match: '\s*(\w{1,31})\s*(=)\s*'
+    - match: '\s*(\w{1,31}|0)\s*(=)\s*'
       captures:
         1: variable.function.stata meta.function-call.stata
         2: support.constant.language.stata punctuation.accessor.stata
@@ -240,7 +240,7 @@ contexts:
         - include: expressions
 
   locals-colon:
-    - match: '\s*(\w{1,31})\s*(:)\s*'
+    - match: '\s*(\w{1,31}|0)\s*(:)\s*'
       captures:
         1: variable.function.stata meta.function-call.stata
         2: support.constant.language.stata punctuation.accessor.stata
@@ -258,7 +258,7 @@ contexts:
     - include: expressions
 
   locals-increment:
-    - match: '\s*([+]{2}|[-]{2})(\w{1,31})'
+    - match: '\s*([+]{2}|[-]{2})(\w{1,31}|0)'
       captures:
         1: support.constant.language.stata keyword.operator.arithmetic.stata
         2: variable.function.stata meta.function-call.stata
@@ -267,13 +267,13 @@ contexts:
     - include: other-comments
 
   locals-invalid:
-    - match: '\s*(\w{1,31})\+\+'
+    - match: '\s*(\w{1,31}|0)\+\+'
       scope: invalid.illegal.stray-bracket-end
     - match: $
       pop: true
 
   locals-standard:
-    - match: '\s*([_a-zA-Z]\w{0,30})\s*'
+    - match: '\s*([_a-zA-Z0]\w{0,30})\s*'
       captures:
         1: variable.function.stata meta.function-call.stata
       push:
