@@ -461,6 +461,12 @@ contexts:
       push:
         - include: macro-begin
         - meta_scope: string.quoted.double.stata meta.string.stata
+        - match: '(`")' # used when displaying Stata commands in SMCL strings
+          scope: punctuation.definition.string.begin.stata
+          push:
+          - match: ("')
+            scope: punctuation.definition.string.end.stata
+            pop: true
         - match: ("')
           scope: punctuation.definition.string.end.stata
           pop: true
