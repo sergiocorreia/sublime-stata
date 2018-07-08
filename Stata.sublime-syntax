@@ -455,6 +455,8 @@ contexts:
           scope: punctuation.definition.string.end.stata
           pop: true
 
+  # We allow up to three quotes because of this example:
+  # di as text `"    {stata `"net install `req', from(`"`github'"')"':install from github}"'
   compound-quote-string:
     - match: '(`")'
       scope: punctuation.definition.string.begin.stata
@@ -464,6 +466,12 @@ contexts:
         - match: '(`")' # used when displaying Stata commands in SMCL strings
           scope: punctuation.definition.string.begin.stata
           push:
+          - match: '(`")'
+            scope: punctuation.definition.string.begin.stata
+            push:
+            - match: ("')
+              scope: punctuation.definition.string.end.stata
+              pop: true
           - match: ("')
             scope: punctuation.definition.string.end.stata
             pop: true
