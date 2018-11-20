@@ -301,7 +301,7 @@ contexts:
         3: keyword.control.flow.stata
 
   simple-blocks:
-    - match: \b(qui|quie|quiet|quietly|noi|nois|noisi|noisil|noisily|cap|capt|captu|captur|capture|break|nobreak)\b
+    - match: \b(qui|quie|quiet|quietly|noi|nois|noisi|noisil|noisily|cap|capt|captu|captur|capture|break|nobreak|varabbrev|novarabbrev)\b
       captures:
         1: keyword.control.flow.stata # support.constant.language.stata
       push: optional-brackets
