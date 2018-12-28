@@ -69,12 +69,12 @@ class StataExecCommand(sublime_plugin.WindowCommand):
         if contents and contents[-1] != "\n":
             contents = contents + "\n"
 
-        prepare = []
-
         # Change current folder
         cwd = get_cwd(view)
         if cwd is not None:
-            sublime.stata.run("cd " + cwd)
+            # Better to modify contents instead of polluting the Stata command history
+            #sublime.stata.run("cd " + cwd)
+            contents = "cd " + cwd + "\n" + contents
         
         # Run requested command
         sublime.stata.run_script(contents)

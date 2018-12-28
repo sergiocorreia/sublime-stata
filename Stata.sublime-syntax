@@ -189,7 +189,7 @@ contexts:
         1: punctuation.definition.comment.begin.stata
       push:
         - clear_scopes: true
-        - meta_scope: comment.line.stata.continuation
+        - meta_scope: comment.line.stata.continuation source.stata
         - match: ^
           pop: true
         - include: comments_in
