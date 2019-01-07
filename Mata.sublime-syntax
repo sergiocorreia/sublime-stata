@@ -11,8 +11,9 @@ scope: source.mata
 variables:
   identifier: \b[[:alpha:]_][[:alnum:]_]*\b # upper and lowercase
   control_keywords: 'if|else|for|while'
-  eltypes: transmorphic|numeric|real|complex|string|pointer|void
+  eltypes: transmorphic|numeric|real|complex|string|pointer|void # |(?![`][A-Z][a-z]*['])
   orgtypes: matrix|vector|rowvector|colvector|scalar
+  function_name: '[a-zA-Z:_][a-zA-Z0-9:_]*'
 
 # ---------------------------------------------------------------------------
 
@@ -40,6 +41,7 @@ contexts:
     - include: operators
     - include: block
     - include: constants
+    - include: function-call
     - match: ','
       scope: punctuation.separator.c
     - match: '\)|\}'
@@ -55,7 +57,7 @@ contexts:
         - meta_scope: meta.function.mata
         - include: mata-program-brackets
 
-    - match: ^({{eltypes}})\s+({{orgtypes}})\s+(function\s+)?([a-zA-Z:_]+)(\()
+    - match: ^({{eltypes}})\s+({{orgtypes}})\s+(function\s+)?({{function_name}})(\()
       captures:
         1: storage.type.function.mata
         2: storage.type.function.mata
@@ -64,14 +66,14 @@ contexts:
         5: punctuation.section.parens.begin meta.parens
       push: mata-function
 
-    - match: ^({{eltypes}})\s([a-zA-Z:_]+)(\()
+    - match: ^({{eltypes}})\s({{function_name}})(\()
       captures:
         1: storage.type.function.mata
         2: entity.name.function.mata meta.generic-name.mata
         3: punctuation.section.parens.begin meta.parens
       push: mata-function
 
-    - match: ^(`)([a-zA-Z]+)(\')\s+(function\s+)?([a-zA-Z:_]+)(\()
+    - match: ^(`)([a-zA-Z]+)(\')\s+(function\s+)?({{function_name}})(\()
       captures:
         1: punctuation.section.group.begin
         2: storage.type.function.mata
@@ -231,14 +233,24 @@ contexts:
         - include: expressions
 
   brackets:
-    - match: \[
-      scope: punctuation.section.brackets.begin.c
+    - match: '\['
+      scope: punctuation.section.brackets.begin.mata keyword.operator.access.mata
       push:
-        - meta_scope: meta.brackets.c
-        - match: \]
-          scope: punctuation.section.brackets.end.c
+        - meta_scope: meta.brackets.mata
+        - match: '\]'
+          scope: punctuation.section.brackets.end.mata keyword.operator.access.mata
           pop: true
         - include: expressions
+
+    - match: '\[\|'
+      scope: punctuation.section.brackets.begin.mata keyword.operator.access.mata
+      push:
+        - meta_scope: meta.brackets.mata
+        - match: '\]\|'
+          scope: punctuation.section.brackets.end.mata keyword.operator.access.mata
+          pop: true
+        - include: expressions
+
 
   keywords:
     - match: \b({{control_keywords}})\b
@@ -284,3 +296,18 @@ contexts:
   constants:
     - match: \b(this|args)\b
       scope: constant.language.c
+
+  function-call:
+    - match: (?={{identifier}}\s*\()
+      push:
+        - meta_content_scope: meta.function-call.mata
+        - match: '{{identifier}}'
+          scope: variable.function.mata meta.generic-name.mata keyword.operator.word.mata
+        - match: '\('
+          scope: meta.group.mata punctuation.section.group.begin.mata
+          set:
+            - meta_content_scope: meta.function-call.mata meta.group.mata
+            - match : \)
+              scope: meta.function-call.mata meta.group.mata punctuation.section.group.end.mata
+              pop: true
+            - include: expressions
