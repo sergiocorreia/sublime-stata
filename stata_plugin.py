@@ -74,7 +74,7 @@ class StataExecCommand(sublime_plugin.WindowCommand):
         if cwd is not None:
             # Better to modify contents instead of polluting the Stata command history
             #sublime.stata.run("cd " + cwd)
-            contents = "cd " + cwd + "\n" + contents
+            contents = 'cd "' + cwd + '"\n' + contents
         
         # Run requested command
         sublime.stata.run_script(contents)
