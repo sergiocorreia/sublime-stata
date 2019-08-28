@@ -358,7 +358,7 @@ contexts:
       scope: invalid.illegal.stray-bracket-end
     - match: '$'
       scope: invalid.illegal.stray-bracket-end
-    - match: ({{value_or_macro}})(\()([-]?{{value_or_macro}})(\))({{value_or_macro}})\s+({)
+    - match: ([-]?{{value_or_macro}})(\()([-]?{{value_or_macro}})(\))([-]?{{value_or_macro}})\s+({)
       captures:
         1: constant.numeric.integer
         2: support.constant.language.stata punctuation.accessor.stata
