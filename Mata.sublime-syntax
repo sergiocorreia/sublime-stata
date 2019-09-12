@@ -13,7 +13,7 @@ variables:
   control_keywords: 'if|else|for|while'
   eltypes: transmorphic|numeric|real|complex|string|pointer|void # |(?![`][A-Z][a-z]*['])
   orgtypes: matrix|vector|rowvector|colvector|scalar
-  function_name: '[a-zA-Z:_][a-zA-Z0-9:_]*'
+  function_name: "[a-zA-Z:_][a-zA-Z0-9:_`']*"
 
 # ---------------------------------------------------------------------------
 
@@ -161,7 +161,7 @@ contexts:
     - match: $
       pop: true
     - match: \w+
-      scope: meta.generic-name.mata # entity.name.function.mata 
+      scope: meta.generic-name.mata # entity.name.function.mata
 
 
   mata-comment: # // some comment
