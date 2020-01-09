@@ -45,6 +45,7 @@ contexts:
     - include: program-drop
     - include: program-define
     - include: mata
+    - include: python
     - include: statements
 
 # ---------------------------------------------------------------------------
@@ -95,6 +96,13 @@ contexts:
         - match: (?=^\s*end\b)
           pop: true
 
+  python:
+    - match: ^\s?python:\s?$
+      push: Packages/Python/Python.sublime-syntax
+      with_prototype:
+        - match: (?=^\s*end\b)
+          pop: true
+
 # ---------------------------------------------------------------------------
 
   statements:
@@ -133,7 +141,7 @@ contexts:
       pop: true
     - match: '(?=[^a-zA-Z0-9_])'
       pop: true
- 
+
   global-safe-macro:
     - include: macro-begin
     - meta_scope: variable.parameter.global.stata
@@ -146,7 +154,7 @@ contexts:
     - include: section-comment
     - include: standalone-comment
     - include: other-comments
-    
+
   other-comments:
     - include: inline-comment
     - include: continuation-comment # must be included before block comment
@@ -427,7 +435,7 @@ contexts:
     - match: '\b({{default_commands}}|{{extra_commands}}|{{ssc_commands}}|{{github_commands}}|{{ftools_commands}}|{{gtools_commands}})\b'
       scope: support.constant.language.stata
       push: inner-commands
-    
+
     - match: '}'
       scope: invalid.illegal.stray-bracket-end
 
@@ -526,7 +534,7 @@ contexts:
       captures:
         1: support.function.stata # entity.name.function.stata
         2: punctuation.section.parens.begin meta.parens
-      push: 
+      push:
         - meta_scope: meta.function
         - include: expressions
         - match: ','
