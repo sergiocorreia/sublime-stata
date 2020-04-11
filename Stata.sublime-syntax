@@ -46,6 +46,7 @@ contexts:
     - include: program-define
     - include: mata
     - include: python
+    - include: latex
     - include: statements
 
 # ---------------------------------------------------------------------------
@@ -101,6 +102,14 @@ contexts:
       push: Packages/Python/Python.sublime-syntax
       with_prototype:
         - match: (?=^\s*end\b)
+          pop: true
+
+# in texdoc latex text starts with /*** and ends with ***/
+  latex:
+    - match: '/\*\*\*'
+      push: Packages/LaTeX/TeX.sublime-syntax
+      with_prototype:
+        - match: '\**\*/'
           pop: true
 
 # ---------------------------------------------------------------------------
