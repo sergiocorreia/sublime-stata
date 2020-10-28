@@ -83,6 +83,12 @@ contexts:
         6: punctuation.section.parens.begin meta.parens
       push: mata-function
 
+    - match: ^(struct)\s({{function_name}})
+      captures:
+        1: storage.type.function.mata
+        2: entity.name.function.mata meta.generic-name.mata
+      push: mata-program-brackets
+
   mata-function:
         - meta_scope: meta.function.mata
         - include: mata-comment
