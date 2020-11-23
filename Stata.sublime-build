@@ -15,5 +15,9 @@
 			"name": "Clear all",
 			"mode": "cleanup",
 		},
+		{
+			"name": "Build",
+			"mode": "build",
+		},
 	]
 }

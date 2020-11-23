@@ -55,19 +55,31 @@ class StataExecCommand(sublime_plugin.WindowCommand):
         current_file = view.file_name() # str or None
         selection_length = sum(len(s) for s in view.sel())
 
-        # Extract contents
-        if not selection_length:
-            contents = view.substr(sublime.Region(0, view.size()))
+        # Test stata packages by running a "demo.do" file
+        if mode == "build":
+            # contents will be 'None' in case of failure (file not exists, etc.)
+            contents = get_build_contents(info=self.window.extract_variables())
         else:
-            # Expand lines
-            last_char = view.substr(view.sel()[-1])[-1]
-            if last_char != '\n':
-                view.run_command("expand_selection", {"to": "line"})
-                
-            contents = ''.join(view.substr(sel) for sel in view.sel())
+            contents = None
 
-        if contents and contents[-1] != "\n":
-            contents = contents + "\n"
+        # Read data from active screen (unless we are just running another file)
+        if contents is None:
+            print('Running current file...')
+            # Extract contents
+            if not selection_length:
+                contents = view.substr(sublime.Region(0, view.size()))
+            else:
+                # Expand lines
+                last_char = view.substr(view.sel()[-1])[-1]
+                if last_char != '\n':
+                    view.run_command("expand_selection", {"to": "line"})
+                    
+                contents = ''.join(view.substr(sel) for sel in view.sel())
+
+            if contents and contents[-1] != "\n":
+                contents = contents + "\n"
+        else:
+            print('Running build do-file...')
 
         # Change current folder
         cwd = get_cwd(view)
@@ -75,7 +87,7 @@ class StataExecCommand(sublime_plugin.WindowCommand):
             # Better to modify contents instead of polluting the Stata command history
             #sublime.stata.run("cd " + cwd)
             contents = 'cd "' + cwd + '"\n' + contents
-        
+    
         # Run requested command
         sublime.stata.run_script(contents)
 
@@ -137,3 +149,36 @@ def get_cwd(view):
     if not fn: return
     cwd = os.path.split(fn)[0]
     return cwd
+
+
+def get_build_contents(info):
+    extension = info['file_extension']
+    package = info['project_base_name']
+    file_name = info['file']
+    file_path = info['file_path']
+
+    if extension not in ('mata', 'ado'):
+        print('stata mode=build: aborted as extension is not .ado or .mata')
+        return
+
+    pointer_fn = os.path.join(file_path, 'build.txt')
+
+    if not os.path.isfile(pointer_fn):
+        print('stata mode=build: aborted as there is no build.txt file')
+        return
+
+    build_fn = open(pointer_fn).read()
+    build_fn = os.path.join(file_path, build_fn)
+    
+    if not os.path.isfile(build_fn):
+        print('stata mode=build: aborted as there is no %s file' % build_fn)
+        return
+
+    with open(build_fn) as fh:
+        content = ''.join(fh.readlines())
+
+    return content
+
+
+
+

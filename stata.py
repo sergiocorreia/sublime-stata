@@ -172,9 +172,9 @@ class Stata(object):
 
 
     def ensure_is_active(self):
-        print("CHECKING IF ACTIVE")
+        #print("CHECKING IF ACTIVE")
         if not self.is_active():
-            print("NOT ACTIVE!")
+            #print("NOT ACTIVE!")
             self.launch_binary()
 
 
