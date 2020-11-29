@@ -152,10 +152,14 @@ def get_cwd(view):
 
 
 def get_build_contents(info):
-    extension = info['file_extension']
-    package = info['project_base_name']
-    file_name = info['file']
-    file_path = info['file_path']
+    extension = info.get('file_extension')
+    package = info.get('project_base_name')
+    file_name = info.get('file')
+    file_path = info.get('file_path')
+
+    if package is None:
+        print('stata mode=build: aborted as attribute "project_base_name" is missing')
+        return
 
     if extension not in ('mata', 'ado'):
         print('stata mode=build: aborted as extension is not .ado or .mata')
