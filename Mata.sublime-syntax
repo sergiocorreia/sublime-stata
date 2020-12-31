@@ -73,7 +73,7 @@ contexts:
         3: punctuation.section.parens.begin meta.parens
       push: mata-function
 
-    - match: ^(`)([a-zA-Z]+)(\')\s+(function\s+)?({{function_name}})(\()
+    - match: ^(`)([\w]+)(\')\s+(function\s+)?({{function_name}})(\()
       captures:
         1: punctuation.section.group.begin
         2: storage.type.function.mata
