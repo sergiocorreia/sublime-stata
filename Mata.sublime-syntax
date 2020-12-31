@@ -148,7 +148,7 @@ contexts:
 
 
   mata-declarations:
-    - match: ^\s+(`)([a-zA-ZΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσ/ςΤτΥυΦφΧχΨψΩω]+)(\')\s+
+    - match: ^\s+(`)([a-zA-ZΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσ/ςΤτΥυΦφΧχΨψΩω_]+)(\')\s+
       captures:
         1: punctuation.section.group.begin
         2: storage.type.function.mata
