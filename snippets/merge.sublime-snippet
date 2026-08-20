@@ -1,9 +1,6 @@
 <snippet>
-	<content><![CDATA[merge ${1:m:1} ${2:bank_id date} using "${3:`using'}", keep(master match) keepusing(${4:variables})
-tab _merge
-assert _merge != 2
-drop _merge]]></content>
+	<content><![CDATA[merge ${1:m:1} ${2:key_vars} using "${3:`using'}", keep(${4:master match}) keepusing(${5:variables})]]></content>
 	<tabTrigger>merge</tabTrigger>
 	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
-	<description>Merge with an explicit contract</description>
+	<description>Merge datasets and keep _merge for checking</description>
 </snippet>

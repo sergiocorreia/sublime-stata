@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[rangestat (${1:mean}) ${2:variables}, interval(${3:date} ${4:-5} ${5:5}) by(${6:bank_id})]]></content>
 	<tabTrigger>rangestat</tabTrigger>
-	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
 	<description>Windowed statistics with rangestat</description>
 </snippet>

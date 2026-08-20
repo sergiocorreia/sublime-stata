@@ -350,6 +350,7 @@ def validate_settings(resources: dict[Path, Any]) -> None:
         "linux_command_focus_keys": ["ctrl+1"],
         "linux_stata_executables": ["xstata-mp", "xstata-se", "xstata"],
         "ado_paths": [],
+        "command_priorities": [],
         "stata_path": "",
         "translate_tabs_to_spaces": False,
         "rulers": [100],
@@ -414,6 +415,11 @@ def validate_snippets() -> None:
         content = required["content"].text
         if content.startswith(("\r", "\n")) or content.endswith(("\r", "\n")):
             fail(f"{path.relative_to(ROOT)}: snippet content has an unintended edge newline")
+        if "inner-commands" in required["scope"].text:
+            fail(
+                f"{path.relative_to(ROOT)}: snippet scope must not exclude inner-commands; "
+                "the caret enters that scope as soon as a command trigger is typed"
+            )
         snippets[trigger] = content
 
     required_triggers = {
@@ -423,6 +429,7 @@ def validate_snippets() -> None:
         "frame-results",
         "gegen-xtile",
         "merge",
+        "merge-check",
         "post-scalar",
         "ppmlhdfe",
         "rangestat",
@@ -435,6 +442,11 @@ def validate_snippets() -> None:
         fail("forv snippet must expand to the unabbreviated forvalues command")
     if "keepusing(" not in snippets["merge"] or "nogen" in snippets["merge"]:
         fail("merge snippet must use keepusing() and preserve _merge for checking")
+    if "tab _merge" in snippets["merge"] or "drop _merge" in snippets["merge"]:
+        fail("the basic merge snippet must remain a single-line command")
+    for required_check in ("tab _merge", "assert ", "drop _merge"):
+        if required_check not in snippets["merge-check"]:
+            fail(f"merge-check snippet is missing {required_check!r}")
     if "include common.do" not in snippets["dofile-template"]:
         fail("dofile-template must include common.do")
 

@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[su ${1:varlist}${2:, detail}]]></content>
 	<tabTrigger>su</tabTrigger>
-	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
 	<description>Summarize variables using the preferred abbreviation</description>
 </snippet>

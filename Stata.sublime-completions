@@ -65,7 +65,7 @@
 			"details": "Copy variables through a linkage created by frlink."
 		},
 		{
-			"trigger": "collectclear",
+			"trigger": "collect-reset",
 			"annotation": "collect · reset",
 			"contents": "collect clear",
 			"kind": "snippet",

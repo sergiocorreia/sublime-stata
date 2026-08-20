@@ -7,6 +7,6 @@ frame post ${1:results} (${3:h}) (${4:b}) (${5:se})
 frame change ${1:results}
 $0]]></content>
 	<tabTrigger>frame-results</tabTrigger>
-	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
 	<description>Create and post to a results frame</description>
 </snippet>

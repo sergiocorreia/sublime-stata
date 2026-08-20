@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[merge ${1:m:1} ${2:key_vars} using "${3:`using'}", keep(${4:master match}) keepusing(${5:variables})
+tab _merge
+assert ${6:_merge != 2}
+drop _merge]]></content>
+	<tabTrigger>merge-check</tabTrigger>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
+	<description>Merge datasets, inspect results, and assert coverage</description>
+</snippet>

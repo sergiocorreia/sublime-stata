@@ -6,6 +6,6 @@ program define ${1:program_name}
 
 end]]></content>
 	<tabTrigger>prog</tabTrigger>
-	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
 	<description>Define a Stata program</description>
 </snippet>

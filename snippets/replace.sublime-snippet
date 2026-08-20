@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[replace ${1:variable_name} = ${2:expression} if ${3:condition}]]></content>
 	<tabTrigger>replace</tabTrigger>
-	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
 	<description>Replace variable values</description>
 </snippet>

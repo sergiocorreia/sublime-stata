@@ -9,6 +9,6 @@ def main():
 main()
 end]]></content>
 	<tabTrigger>python</tabTrigger>
-	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
 	<description>Embedded Python block</description>
 </snippet>

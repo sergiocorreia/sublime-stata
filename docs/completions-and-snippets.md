@@ -27,10 +27,26 @@ The package deliberately does not query a running Stata GUI for variables or liv
 ## Project-aligned snippets
 
 Snippet expansions follow `extra/STATA_STYLE_GUIDE.md`: literal tabs, lowercase placeholders,
-unabbreviated `forvalues` and `rename`, explicit storage types and merge contracts, compact `mi()`,
+unabbreviated `forvalues` and `rename`, explicit storage types and merge checks, compact `mi()`,
 frames for accumulated results, and preferred tools such as `gisid`, `gegen`, `reghdfe`, `ppmlhdfe`,
 and `rangestat`.
 
 The most useful triggers are listed in [Usage and settings](usage.md#snippet-triggers). The files in
 `extra/` are references only; completions and snippets do not source or install `common.do`, `dodo.ado`,
 the graph scheme, or the sound file.
+
+## Frequency-informed ordering
+
+Completion ordering stores only two compact command-name tiers: commands observed in at least 40% of
+projects and commands observed in 10–40%. Everything else uses the default/infrequent tier. Counts and
+project-level source data are not distributed. Common abbreviations are mapped to their full commands
+before tiering, while the original abbreviation is retained when it is itself a supported completion.
+
+To rebuild the snapshot locally from the ignored private aggregate, run:
+
+```sh
+python3 misc/generate_command_tiers.py --input extra/cmd_count.csv
+```
+
+Snippets always precede command-name tiers. The `command_priorities` setting can place personal choices
+ahead of the bundled ordering without copying the frequency table into settings.

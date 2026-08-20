@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[gegen ${1:category} = xtile(${2:variable}), n(${3:10})${4: by(year)}]]></content>
 	<tabTrigger>gegen-xtile</tabTrigger>
-	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
 	<description>Create quantile bins with gtools</description>
 </snippet>

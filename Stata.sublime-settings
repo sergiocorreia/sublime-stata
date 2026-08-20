@@ -14,6 +14,9 @@
 	// Extra directories searched for user/project ado completions.
 	"ado_paths": [],
 
+	// Optional personal overrides placed ahead of the bundled frequency tiers.
+	"command_priorities": [],
+
 	// Legacy Windows Automation executable path.
 	"stata_path": "",
 

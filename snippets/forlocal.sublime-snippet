@@ -3,6 +3,6 @@
 	$0
 }]]></content>
 	<tabTrigger>forlocal</tabTrigger>
-	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
 	<description>Loop over a local macro</description>
 </snippet>

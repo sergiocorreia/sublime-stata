@@ -14,9 +14,11 @@ from pathlib import Path
 import re
 import time
 from typing import Iterable, List, Optional, Sequence, Set, Tuple
+import xml.etree.ElementTree as ET
 
 
 CATALOG_PATH = Path(__file__).with_name("stata19_commands.json")
+COMMAND_TIERS_PATH = Path(__file__).with_name("command_tiers.json")
 ADO_CACHE_TTL_SECONDS = 2.0
 SOURCE_SUFFIXES = (".do", ".ado", ".doh", ".mata")
 IGNORED_DIRECTORIES = {
@@ -160,6 +162,33 @@ def catalog_metadata(path: str = str(CATALOG_PATH)) -> dict:
     return dict(payload.get("stata", {}))
 
 
+@lru_cache(maxsize=4)
+def load_command_tiers(path: str = str(COMMAND_TIERS_PATH)) -> Tuple[Tuple[str, ...], ...]:
+    """Load compact, privacy-safe command frequency tiers."""
+
+    with open(path, encoding="utf-8") as handle:
+        payload = json.load(handle)
+    if payload.get("schema_version") != 1:
+        raise ValueError("Unsupported command tier schema")
+    tiers = payload.get("tiers", {})
+    if not isinstance(tiers, dict):
+        raise ValueError("Command tier catalog has no tiers object")
+    result = []
+    seen = set()
+    for name in ("very_common", "common"):
+        values = tiers.get(name, [])
+        if not isinstance(values, list):
+            raise ValueError("Command tier {!r} must be a list".format(name))
+        tier = []
+        for command in values:
+            if not isinstance(command, str) or not command or command in seen:
+                continue
+            seen.add(command)
+            tier.append(command)
+        result.append(tuple(tier))
+    return tuple(result)
+
+
 def extract_symbols(text: str) -> SymbolIndex:
     """Extract declarations and macro references visible in Stata source."""
 
@@ -280,9 +309,73 @@ def symbol_candidates(index: SymbolIndex, kind: str, fragment: str = "") -> List
 
 
 def command_candidates(
-    commands: Iterable[str], fragment: str = "", annotation: str = "Stata command"
+    commands: Iterable[str], fragment: str = "", annotation: str = "Stata command",
+    priorities: Sequence[str] = (), tiers: Sequence[Sequence[str]] = (),
 ) -> List[Candidate]:
-    return _named_candidates(commands, fragment, annotation, "command")
+    candidates = _named_candidates(commands, fragment, annotation, "command")
+    priority = {
+        command.casefold(): index
+        for index, command in enumerate(priorities)
+        if isinstance(command, str)
+    }
+    tier_lookup = {
+        command.casefold(): tier_index
+        for tier_index, tier in enumerate(tiers)
+        for command in tier
+        if isinstance(command, str)
+    }
+    fallback = len(tiers)
+
+    def sort_key(candidate: Candidate):
+        name = candidate.trigger.casefold()
+        if name in priority:
+            return (0, priority[name], name)
+        return (1, tier_lookup.get(name, fallback), name)
+
+    return sorted(
+        candidates,
+        key=sort_key,
+    )
+
+
+def snippet_candidates_from_xml(resources: Iterable[str]) -> Tuple[Candidate, ...]:
+    """Load package snippets as rich completion candidates."""
+
+    candidates = []
+    for resource in resources:
+        root = ET.fromstring(resource)
+        trigger = (root.findtext("tabTrigger") or "").strip()
+        completion = root.findtext("content") or ""
+        description = (root.findtext("description") or "Stata snippet").strip()
+        if trigger and completion:
+            candidates.append(Candidate(
+                trigger,
+                completion,
+                "snippet",
+                "snippet",
+                details=description,
+                snippet=True,
+            ))
+    return tuple(sorted(candidates, key=lambda candidate: candidate.trigger.casefold()))
+
+
+def matching_snippet_candidates(
+    candidates: Iterable[Candidate], fragment: str = ""
+) -> List[Candidate]:
+    """Filter snippets and put an exact trigger before related triggers."""
+
+    needle = fragment.casefold()
+    matches = [
+        candidate for candidate in candidates
+        if not needle or candidate.trigger.casefold().startswith(needle)
+    ]
+    return sorted(
+        matches,
+        key=lambda candidate: (
+            candidate.trigger.casefold() != needle,
+            candidate.trigger.casefold(),
+        ),
+    )
 
 
 def _named_candidates(

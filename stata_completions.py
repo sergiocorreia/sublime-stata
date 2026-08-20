@@ -16,11 +16,33 @@ MAX_OPEN_VIEWS = 24
 MAX_OPEN_VIEW_BYTES = 400_000
 MAX_OPEN_TOTAL_BYTES = 1_000_000
 settings = None
+command_snippets = ()
+
+DEFAULT_COMMAND_PRIORITIES = ()
 
 
 def plugin_loaded():
-    global settings
+    global settings, command_snippets
     settings = sublime.load_settings(SETTINGS_FILE)
+    command_snippets = _load_command_snippets()
+
+
+def _load_command_snippets():
+    package_name = (__package__ or __name__).split(".", 1)[0]
+    prefix = "Packages/{}/snippets/".format(package_name)
+    resources = []
+    for path in sublime.find_resources("*.sublime-snippet"):
+        if not path.startswith(prefix):
+            continue
+        try:
+            resources.append(sublime.load_resource(path))
+        except Exception:
+            traceback.print_exc()
+    try:
+        return catalog.snippet_candidates_from_xml(resources)
+    except Exception:
+        traceback.print_exc()
+        return ()
 
 
 class AutocompleteColonCommand(sublime_plugin.TextCommand):
@@ -61,6 +83,8 @@ class StataCompletions(sublime_plugin.EventListener):
         open_texts = self._open_view_texts(view)
         root_candidates = self._project_root_candidates(view)
         configured_ado_paths = self._configured_ado_path_candidates()
+        configured_command_priorities = self._configured_command_priorities()
+        snippet_snapshot = command_snippets
         request_view_id = view.id()
         request_change_count = view.change_count()
         request_locations = tuple(locations)
@@ -77,6 +101,8 @@ class StataCompletions(sublime_plugin.EventListener):
                     open_texts=open_texts,
                     root_candidates=root_candidates,
                     configured_ado_paths=configured_ado_paths,
+                    configured_command_priorities=configured_command_priorities,
+                    command_snippets=snippet_snapshot,
                 )
                 items = self._completion_items(candidates)
             except Exception:
@@ -106,6 +132,8 @@ class StataCompletions(sublime_plugin.EventListener):
         open_texts,
         root_candidates,
         configured_ado_paths,
+        configured_command_priorities,
+        command_snippets,
     ):
         if extended_local:
             candidates = [
@@ -138,7 +166,15 @@ class StataCompletions(sublime_plugin.EventListener):
                 catalog.discover_ado_commands(ado_roots),
                 open_index.programs,
             )
-            candidates = catalog.command_candidates(commands, context.fragment)
+            candidates = catalog.matching_snippet_candidates(
+                command_snippets, context.fragment
+            )
+            candidates += catalog.command_candidates(
+                commands,
+                context.fragment,
+                priorities=configured_command_priorities,
+                tiers=catalog.load_command_tiers(),
+            )
         elif context.kind == "path":
             candidates = catalog.path_candidates(
                 context.fragment,
@@ -205,6 +241,17 @@ class StataCompletions(sublime_plugin.EventListener):
         return tuple(path for path in value if isinstance(path, str))
 
     @staticmethod
+    def _configured_command_priorities():
+        global settings
+        if settings is None:
+            settings = sublime.load_settings(SETTINGS_FILE)
+        value = settings.get("command_priorities", [])
+        if not isinstance(value, list):
+            return DEFAULT_COMMAND_PRIORITIES
+        priorities = tuple(command for command in value if isinstance(command, str))
+        return priorities
+
+    @staticmethod
     def _standard_ado_paths():
         paths = ["~/ado/personal", "~/ado/plus"]
         for prefix in ("/usr/local", "/opt"):
@@ -228,7 +275,7 @@ class StataCompletions(sublime_plugin.EventListener):
         )
         completion_list.set_completions(
             items if is_current else [],
-            sublime.INHIBIT_WORD_COMPLETIONS,
+            sublime.INHIBIT_WORD_COMPLETIONS | sublime.INHIBIT_REORDER,
         )
 
     @staticmethod

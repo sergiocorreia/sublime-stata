@@ -62,6 +62,15 @@ class RichStaticCompletionTests(unittest.TestCase):
             for embedded in ("source.mata", "source.python", "text.tex.latex"):
                 self.assertIn("- " + embedded, scope, path.name)
 
+    def test_command_snippets_are_visible_after_typing_the_trigger(self) -> None:
+        for path in (ROOT / "snippets").glob("*.sublime-snippet"):
+            scope = ET.parse(path).getroot().findtext("scope") or ""
+            self.assertNotIn(
+                "inner-commands",
+                scope,
+                "{} disappears after its command trigger is typed".format(path.name),
+            )
+
     def test_static_triggers_do_not_duplicate_snippet_tab_triggers(self) -> None:
         snippet_triggers = set()
         for path in (ROOT / "snippets").glob("*.sublime-snippet"):
@@ -112,6 +121,11 @@ class CompletionListenerStructureTests(unittest.TestCase):
         self.assertIn("completion_list = sublime.CompletionList()", source)
         self.assertIn("sublime.set_timeout_async(resolve)", source)
         self.assertIn("completion_list.set_completions(", source)
+        self.assertIn("sublime.INHIBIT_REORDER", source)
+        self.assertLess(
+            source.index("catalog.matching_snippet_candidates("),
+            source.index("catalog.command_candidates("),
+        )
         self.assertIn("view.change_count()", source)
         self.assertIn("request_locations", source)
         self.assertIn("window.views()", source)

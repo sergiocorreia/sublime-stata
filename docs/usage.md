@@ -82,6 +82,7 @@ Open **Preferences > Package Settings > Stata > Settings**. User settings overri
     "linux_command_focus_keys": ["ctrl+1"],
     "linux_stata_executables": ["xstata-mp", "xstata-se", "xstata"],
     "ado_paths": [],
+    "command_priorities": [],
     "stata_path": ""
 }
 ```
@@ -110,6 +111,13 @@ automatic targeting.
 Absolute paths to additional personal or project ADO directories. Runtime command completion scans
 these along with Stata's standard locations.
 
+### `command_priorities`
+
+An optional ordered list of personal overrides. Matching snippets always appear first. Plain commands
+then use the bundled **very common**, **common**, and **infrequent/default** tiers derived from aggregate
+do-file usage, with alphabetical ordering inside each tier. Personal overrides are placed before the
+bundled tiers. This makes `clear` appear before `class` for the prefix `cl` by default.
+
 ### `stata_path`
 
 Optional legacy Windows Automation executable path. The Windows backend validates this path and uses
@@ -131,7 +139,10 @@ Type a trigger and press <kbd>Tab</kbd>. Useful project-aligned triggers include
 | `mi-fn` | Compact `mi(varlist)` missing-value test |
 | `frame-results` | Create, post to, and enter a results frame |
 | `gegen-xtile` | Fast quantile categories, optionally by group |
-| `merge` / `join` | Explicit dataset-combination contracts |
+| `merge` | One-line merge that leaves `_merge` available for checking |
+| `merge-check` | Merge followed by `tab`, `assert`, and `drop _merge` |
+| `join` | Dataset join using `ftools` |
+| `reshape` | Reshape data between long and wide forms |
 | `reghdfe` / `ppmlhdfe` | High-dimensional fixed-effect models |
 | `rangestat` | Windowed statistics |
 | `post-scalar` | Write a scalar for a LaTeX include |

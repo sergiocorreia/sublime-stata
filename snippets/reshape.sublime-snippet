@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[reshape ${1:long} ${2:stub_names}, i(${3:bank_id}) j(${4:year})]]></content>
 	<tabTrigger>reshape</tabTrigger>
-	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
 	<description>Reshape data long or wide</description>
 </snippet>

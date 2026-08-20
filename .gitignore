@@ -96,3 +96,7 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Private command-frequency corpus; used locally to tune completion ranking.
+/extra/stata_cmd_count.Rds
+/extra/cmd_count.csv

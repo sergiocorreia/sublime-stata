@@ -11,6 +11,6 @@
 
 	$0]]></content>
 	<tabTrigger>dofile-template</tabTrigger>
-	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
 	<description>Project do-file skeleton</description>
 </snippet>

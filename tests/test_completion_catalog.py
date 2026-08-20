@@ -102,6 +102,34 @@ class ContextTests(unittest.TestCase):
             catalog.CompletionContext("symbol", "long_variable"),
         )
 
+    def test_snippets_precede_commands_and_exact_snippets_come_first(self) -> None:
+        snippets = catalog.snippet_candidates_from_xml((
+            "<snippet><content>merge ${1:m:1}</content>"
+            "<tabTrigger>merge</tabTrigger><description>Merge</description></snippet>",
+            "<snippet><content>merge ${1:m:1}\\ntab _merge</content>"
+            "<tabTrigger>merge-check</tabTrigger>"
+            "<description>Checked merge</description></snippet>",
+        ))
+        matches = catalog.matching_snippet_candidates(snippets, "merge")
+        commands = catalog.command_candidates(("merge",), "merge")
+        candidates = matches + commands
+        self.assertEqual(
+            [(candidate.trigger, candidate.kind) for candidate in candidates],
+            [("merge", "snippet"), ("merge-check", "snippet"), ("merge", "command")],
+        )
+
+    def test_command_priorities_override_alphabetical_order(self) -> None:
+        candidates = catalog.command_candidates(
+            ("class", "clear", "clonevar"),
+            "cl",
+            priorities=("clonevar",),
+            tiers=(("clear",), ()),
+        )
+        self.assertEqual(
+            [candidate.trigger for candidate in candidates],
+            ["clonevar", "clear", "class"],
+        )
+
 
 class FilesystemCompletionTests(unittest.TestCase):
     def test_recursive_scans_collapse_nested_project_roots(self) -> None:
@@ -158,6 +186,16 @@ class FilesystemCompletionTests(unittest.TestCase):
 
 
 class BundledCatalogTests(unittest.TestCase):
+    def test_frequency_tiers_are_compact_disjoint_and_rank_clear(self) -> None:
+        very_common, common = catalog.load_command_tiers()
+        self.assertLessEqual(len(very_common), 40)
+        self.assertLessEqual(len(common), 60)
+        self.assertFalse(set(very_common) & set(common))
+        self.assertIn("clear", very_common)
+        self.assertIn("merge", very_common)
+        self.assertIn("reshape", very_common)
+        self.assertNotIn("class", set(very_common) | set(common))
+
     def test_catalog_metadata_and_modern_commands(self) -> None:
         payload = json.loads(catalog.CATALOG_PATH.read_text(encoding="utf-8"))
         commands = set(catalog.load_command_catalog())
