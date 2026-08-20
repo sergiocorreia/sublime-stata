@@ -198,7 +198,7 @@ class XdotoolTests(unittest.TestCase):
         return stata.XdotoolBackend(
             env={"DISPLAY": ":0", "XDG_SESSION_TYPE": "x11"},
             runner=runner,
-            which=lambda binary: "/usr/bin/xdotool",
+            which=lambda binary: "/usr/bin/{}".format(binary),
             process_executable=process_executable,
             sleeper=sleeper or (lambda seconds: None),
             modifiers_pressed=modifiers_pressed or (lambda: False),
@@ -212,6 +212,14 @@ class XdotoolTests(unittest.TestCase):
 
         def runner(argv):
             calls.append(argv)
+            if argv[0] == "/usr/bin/xprop":
+                window_id = int(argv[2])
+                window_class = "Stata" if window_id != 30 else "Sublime_text"
+                return Result(
+                    'WM_CLASS(STRING) = "{}", "{}"\n'.format(
+                        window_class.lower(), window_class
+                    )
+                )
             command = argv[1]
             if command == "search":
                 return Result("10\n11\n20\n30\n")
@@ -220,8 +228,6 @@ class XdotoolTests(unittest.TestCase):
                 return Result(str(pids[window_id]))
             if command == "getwindowname":
                 return Result(names[window_id])
-            if command == "getwindowclassname":
-                return Result("Stata" if window_id != 30 else "Sublime_text")
             if command == "getwindowgeometry":
                 width, height = geometry[window_id]
                 return Result("WIDTH={}\nHEIGHT={}\n".format(width, height))
@@ -317,11 +323,15 @@ class XdotoolTests(unittest.TestCase):
             calls.append(argv)
             if argv[1] == "getactivewindow":
                 return Result("{}\n".format(active_window[0]))
-            if argv[1] == "getwindowclassname":
-                return Result("sublime_text\n")
+            if argv[1] == "getwindowpid":
+                return Result("500\n")
+            if argv[0] == "/usr/bin/xprop":
+                return Result('WM_CLASS(STRING) = "sublime_text", "Sublime_text"\n')
             return Result()
 
-        backend = self.backend(runner)
+        backend = self.backend(
+            runner, process_executable=lambda pid: "/opt/sublime_text/sublime_text"
+        )
         restore_window = backend.capture_sublime_window()
         active_window[0] = 55  # Another app takes focus while discovery runs.
         backend.deliver(
@@ -338,12 +348,54 @@ class XdotoolTests(unittest.TestCase):
         def runner(argv):
             if argv[1] == "getactivewindow":
                 return Result("99\n")
-            if argv[1] == "getwindowclassname":
-                return Result("xterm\n")
+            if argv[1] == "getwindowpid":
+                return Result("500\n")
+            if argv[0] == "/usr/bin/xprop":
+                return Result('WM_CLASS(STRING) = "xterm", "XTerm"\n')
             return Result()
 
         with self.assertRaisesRegex(stata.StataEnvironmentError, "did not originate"):
-            self.backend(runner).capture_sublime_window()
+            self.backend(
+                runner, process_executable=lambda pid: "/usr/bin/xterm"
+            ).capture_sublime_window()
+
+    def test_wm_class_uses_standard_xprop_output(self):
+        calls = []
+
+        def runner(argv):
+            calls.append(argv)
+            return Result('WM_CLASS(STRING) = "xstata-mp", "Stata"\n')
+
+        backend = self.backend(runner)
+        self.assertEqual(backend._window_class(77), "xstata-mp Stata")
+        self.assertEqual(
+            calls, [["/usr/bin/xprop", "-id", "77", "WM_CLASS"]]
+        )
+
+    def test_window_class_is_optional_when_xprop_is_unavailable(self):
+        def runner(argv):
+            command = argv[1]
+            if command == "search":
+                return Result("77\n")
+            if command == "getwindowpid":
+                return Result("700\n")
+            if command == "getwindowname":
+                return Result("Research session\n")
+            if command == "getwindowgeometry":
+                return Result("WIDTH=1200\nHEIGHT=800\n")
+            raise AssertionError(argv)
+
+        backend = stata.XdotoolBackend(
+            env={"DISPLAY": ":0", "XDG_SESSION_TYPE": "x11"},
+            runner=runner,
+            which=lambda binary: "/usr/bin/xdotool" if binary == "xdotool" else None,
+            process_executable=lambda pid: "/opt/stata/xstata-mp",
+            sleeper=lambda seconds: None,
+            modifiers_pressed=lambda: False,
+        )
+        windows = backend.discover_windows()
+        self.assertEqual([window.window_id for window in windows], [77])
+        self.assertEqual(windows[0].window_class, "")
 
     def test_delivery_waits_for_actual_modifier_release(self):
         states = iter((True, True, False))

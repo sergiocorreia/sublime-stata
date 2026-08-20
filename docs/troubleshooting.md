@@ -51,8 +51,11 @@ To inspect visible titles manually:
 
 ```sh
 xdotool search --onlyvisible --maxdepth 2 --class '.*' \
-    getwindowclassname %@ getwindowname %@
+    getwindowname %@
 ```
+
+To inspect a window's X11 class, use `xprop -id WINDOW_ID WM_CLASS`. Standard
+Linux builds of `xdotool` do not include a `getwindowclassname` command.
 
 This intentionally does not filter on the title, because `window manage maintitle` may replace the
 usual Stata/StataNow title.

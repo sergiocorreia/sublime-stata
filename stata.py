@@ -414,9 +414,11 @@ def choose_target_window(
 class XdotoolBackend:
     """Discover and control an existing Stata GUI in an X11 session."""
 
-    def __init__(self, binary="xdotool", env=None, runner=None, which=None,
-                 process_executable=None, sleeper=None, modifiers_pressed=None):
+    def __init__(self, binary="xdotool", xprop_binary="xprop", env=None,
+                 runner=None, which=None, process_executable=None, sleeper=None,
+                 modifiers_pressed=None):
         self.binary = binary
+        self.xprop_binary = xprop_binary
         self.env = os.environ if env is None else env
         self.runner = runner or self._subprocess_runner
         self.which = which or shutil.which
@@ -540,6 +542,31 @@ class XdotoolBackend:
             raise StataEnvironmentError("xdotool failed: {}".format(detail))
         return result.stdout or ""
 
+    @staticmethod
+    def _parse_wm_class(output: str) -> str:
+        """Return the two WM_CLASS values emitted by standard xprop."""
+
+        if "=" not in output or "not found" in output.lower():
+            return ""
+        values = re.findall(r'"((?:\\.|[^"\\])*)"', output)
+        return " ".join(values)
+
+    def _window_class(self, window_id: int) -> str:
+        """Read WM_CLASS with xprop when available.
+
+        xdotool does not provide a getwindowclassname command in its standard
+        Linux releases.  WM_CLASS improves main-window scoring, but remains
+        optional because PID/executable discovery is sufficient for safety.
+        """
+
+        xprop = self.which(self.xprop_binary)
+        if not xprop:
+            return ""
+        result = self.runner([xprop, "-id", str(window_id), "WM_CLASS"])
+        if result.returncode:
+            return ""
+        return self._parse_wm_class(result.stdout or "")
+
     def active_window_id(self) -> int:
         """Return the active X11 window without changing focus."""
 
@@ -561,13 +588,22 @@ class XdotoolBackend:
         """Capture and validate the originating Sublime X11 window."""
 
         window_id = self.active_window_id()
-        window_class = self._run(
-            ["getwindowclassname", str(window_id)]
-        ).strip().lower()
-        if "sublime" not in window_class:
+        try:
+            pid_text = self._run(["getwindowpid", str(window_id)]).strip()
+            pid = int(pid_text) if pid_text else None
+        except (StataEnvironmentError, ValueError):
+            pid = None
+        executable = self.process_executable(pid) if pid is not None else None
+        executable_name = os.path.basename(
+            (executable or "").removesuffix(" (deleted)")
+        ).lower()
+        window_class = self._window_class(window_id).lower()
+        if "sublime" not in executable_name and "sublime" not in window_class:
             raise StataEnvironmentError(
                 "Ctrl+B did not originate from a Sublime Text X11 window "
-                "(active window class: {!r})".format(window_class or "unknown")
+                "(active executable: {!r}; class: {!r})".format(
+                    executable_name or "unknown", window_class or "unknown"
+                )
             )
         return window_id
 
@@ -620,12 +656,7 @@ class XdotoolBackend:
                 title = self._run(["getwindowname", str(window_id)]).strip()
             except StataEnvironmentError:
                 title = ""
-            try:
-                window_class = self._run(
-                    ["getwindowclassname", str(window_id)]
-                ).strip()
-            except StataEnvironmentError:
-                window_class = ""
+            window_class = self._window_class(window_id)
             try:
                 geometry = self._run(
                     ["getwindowgeometry", "--shell", str(window_id)]
