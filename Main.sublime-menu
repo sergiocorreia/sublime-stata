@@ -1,79 +1,91 @@
 [
-    {
-        "caption": "Tools",
-        "mnemonic": "T",
-        "id": "tools",
-        "children":
-        [
-            {
-                "caption": "Stata",
-                "id": "stata",
-                "mnemonic": "S",
-                "children":
-                [
-                    {
-                        "caption": "Selection: Show Help on Stata",
-                        "command": "stata_help_external"
-                    },
-                    {
-                        "caption": "Selection: Show Help on Sublime Text",
-                        "command": "stata_help_internal"
-                    },
-                    { "caption": "-" },
-                    {
-                        "caption": "Change Stata Path",
-                        "command": "stata_update_executable_path"
-                    },
-                    {
-                        "caption": "Register Stata Automation",
-                        "command": "stata_register_automation"
-                    }                ]
-            }
-        ]
-    },
-    {
-        "caption": "Preferences",
-        "mnemonic": "n",
-        "id": "preferences",
-        "children":
-        [
-            {
-                "caption": "Package Settings",
-                "mnemonic": "P",
-                "id": "package-settings",
-                "children":
-                [
-                    {
-                        "caption": "Stata",
-                        "children":
-                        [
-                            {
-                                "caption": "Settings – Default",
-                                "command": "open_file",
-                                "args": {"file": "${packages}/Stata/Stata.sublime-settings"}
-                            },
-                            {
-                                "caption": "Settings – User",
-                                "command": "open_file",
-                                "args": {"file": "${packages}/User/Stata.sublime-settings"}
-                            },
-                            {
-                                "caption": "-"
-                            },
-                            {
-                                "caption": "Key Bindings – Default",
-                                "command": "open_file",
-                                "args": {"file": "${packages}/Stata/Default (Windows).sublime-keymap"}
-                            },
-                            {
-                                "caption": "Key Bindings – User",
-                                "command": "open_file",
-                                "args": {"file": "${packages}/User/Default (Windows).sublime-keymap"}
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
+	{
+		"caption": "Tools",
+		"mnemonic": "T",
+		"id": "tools",
+		"children":
+		[
+			{
+				"caption": "Stata",
+				"id": "stata",
+				"mnemonic": "S",
+				"children":
+				[
+					{
+						"caption": "Run Selection or Buffer",
+						"command": "stata_exec",
+						"args": { "action": "do" }
+					},
+					{
+						"caption": "Help for Command",
+						"command": "stata_help"
+					},
+					{
+						"caption": "Toggle save/use",
+						"command": "stata_toggle_dataset_io"
+					},
+					{ "caption": "-" },
+					{
+						"caption": "Choose Target Window…",
+						"command": "stata_choose_target_window"
+					},
+					{
+						"caption": "Use Most Recent Window",
+						"command": "stata_use_recent_window"
+					},
+					{ "caption": "-" },
+					{
+						"caption": "Settings",
+						"command": "edit_settings",
+						"args":
+						{
+							"base_file": "${packages}/Stata/Stata.sublime-settings",
+							"default": "{\n\t$0\n}\n"
+						}
+					},
+					{
+						"caption": "Documentation",
+						"command": "open_file",
+						"args": { "file": "${packages}/Stata/README.md" }
+					}
+				]
+			}
+		]
+	},
+	{
+		"caption": "Preferences",
+		"mnemonic": "n",
+		"id": "preferences",
+		"children":
+		[
+			{
+				"caption": "Package Settings",
+				"mnemonic": "P",
+				"id": "package-settings",
+				"children":
+				[
+					{
+						"caption": "Stata",
+						"children":
+						[
+							{
+								"caption": "Settings",
+								"command": "edit_settings",
+								"args":
+								{
+									"base_file": "${packages}/Stata/Stata.sublime-settings",
+									"default": "{\n\t$0\n}\n"
+								}
+							},
+							{
+								"caption": "Documentation",
+								"command": "open_file",
+								"args": { "file": "${packages}/Stata/README.md" }
+							}
+						]
+					}
+				]
+			}
+		]
+	}
 ]

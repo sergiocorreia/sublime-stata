@@ -1,73 +1,254 @@
-# Based on:
-# https://github.com/y0ssar1an/CSS3/blob/master/css3_completions.py
+"""Context-aware Stata completions backed by source and filesystem indexes."""
 
-# See also:
-# http://docs.sublimetext.info/en/latest/reference/api.html
-
-from .completions import util
-from .completions import extended_locals
+import glob
+import os
+import traceback
 
 import sublime
 import sublime_plugin
 
+from .completions import catalog
+from .completions import extended_locals
 
-class AutocompleteColon(sublime_plugin.TextCommand):
+
+SETTINGS_FILE = "Stata.sublime-settings"
+MAX_OPEN_VIEWS = 24
+MAX_OPEN_VIEW_BYTES = 400_000
+MAX_OPEN_TOTAL_BYTES = 1_000_000
+settings = None
+
+
+def plugin_loaded():
+    global settings
+    settings = sublime.load_settings(SETTINGS_FILE)
+
+
+class AutocompleteColonCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         self.view.run_command("insert_snippet", {"contents": " : "})
         self.view.run_command("auto_complete")
 
 
 class StataCompletions(sublime_plugin.EventListener):
+    """Offer useful completions without inspecting a running Stata session."""
 
     def on_query_completions(self, view, prefix, locations):
-        """Populate the completions menu based on the current cursor location.
+        if len(locations) != 1:
+            return None
 
-        Args:
-            view (sublime.View): A Sublime API object that contains the
-                match_selector() method for detecting if the current scope has
-                completions, and the substr() method for getting text from the
-                document.
-            prefix (str): The first part of the text that triggered the
-                completions menu, e.g. "tex" for "text-decoration".
-            locations (list: int): The current integer positions of the cursors.
+        point = locations[0]
+        if not view.match_selector(point, "source.stata"):
+            return None
+        if view.match_selector(
+            point, "comment, source.mata, source.python, text.tex.latex"
+        ):
+            return None
 
-        Returns:
-            [(<label>, <completion), ...], inhibit_flag
+        line = view.line(point)
+        line_before_cursor = view.substr(sublime.Region(line.begin(), point))
+        context = catalog.detect_context(line_before_cursor)
+        if view.match_selector(point, "string") and context.kind not in (
+            "path",
+            "local",
+            "global",
+        ):
+            return None
+        extended_local = view.match_selector(point, "meta.local.extended.stata")
 
-            <label> is what will appear in the completions menu. <completion> is
-            the snippet that will be inserted. inhibit_flag controls whether
-            "word completions" are offered as well. "Word completions" are
-            a list of every word in the current file greater than four
-            characters long.
-        """
+        # Sublime view contents must be captured on the UI thread.  All source
+        # parsing and filesystem work below is deferred to an async worker.
+        buffer_text = view.substr(sublime.Region(0, view.size()))
+        open_texts = self._open_view_texts(view)
+        root_candidates = self._project_root_candidates(view)
+        configured_ado_paths = self._configured_ado_path_candidates()
+        request_view_id = view.id()
+        request_change_count = view.change_count()
+        request_locations = tuple(locations)
 
-        if not view.match_selector(locations[0], "source.stata"):
-            return []
+        completion_list = sublime.CompletionList()
 
-        if view.match_selector(locations[0], "comment"):
-            return []
+        def resolve():
+            try:
+                candidates = self._build_candidates(
+                    prefix=prefix,
+                    line_before_cursor=line_before_cursor,
+                    extended_local=extended_local,
+                    buffer_text=buffer_text,
+                    open_texts=open_texts,
+                    root_candidates=root_candidates,
+                    configured_ado_paths=configured_ado_paths,
+                )
+                items = self._completion_items(candidates)
+            except Exception:
+                traceback.print_exc()
+                items = []
 
-        if view.match_selector(locations[0], "source.mata") or True:
-            return []
+            sublime.set_timeout(
+                lambda: self._publish_if_current(
+                    completion_list,
+                    items,
+                    view,
+                    request_view_id,
+                    request_change_count,
+                    request_locations,
+                )
+            )
 
-        # If there's multiple cursors, we can't offer completions.
-        #     body {
-        #         foo: |<- cursor
-        #         bar: |<- second cursor
-        #     }
-        # Which values do we offer? foo's or bar's?
-        if len(locations) > 1:
-            return [], sublime.INHIBIT_WORD_COMPLETIONS
+        sublime.set_timeout_async(resolve)
+        return completion_list
 
-        # start determines which completions are offered.
-        #         |--prefix--|
-        # start ->text-decorat|<- current cursor location
-        start = locations[0] - len(prefix)
+    def _build_candidates(
+        self,
+        prefix,
+        line_before_cursor,
+        extended_local,
+        buffer_text,
+        open_texts,
+        root_candidates,
+        configured_ado_paths,
+    ):
+        if extended_local:
+            candidates = [
+                catalog.Candidate(
+                    trigger,
+                    completion,
+                    annotation,
+                    "snippet",
+                    details="Extended local macro function",
+                    snippet=True,
+                )
+                for trigger, annotation, completion in extended_locals.get_completions(
+                    add_space=line_before_cursor.endswith(":")
+                )
+            ]
+            return catalog.dedupe_candidates(candidates)
 
-        last_block = view.substr(sublime.Region(start-10, start)).rstrip()
+        context = catalog.detect_context(line_before_cursor)
+        roots = catalog.normalize_roots(root_candidates)
+        ado_roots = catalog.sorted_union(
+            roots,
+            self._standard_ado_paths(),
+            catalog.normalize_roots(configured_ado_paths),
+        )
+        open_index = catalog.index_sources((buffer_text,) + open_texts)
 
-        # Match extended locals ("local x : var label xyz")
-        if view.match_selector(start, "meta.local.extended.stata") and last_block.endswith(':'):
-            add_space = view.substr(start - 1) == ':'
-            #print(last_block, view.substr(start), prefix, sep='|')
-            return extended_locals.get_completions(add_space)
+        if context.kind == "command":
+            commands = catalog.sorted_union(
+                catalog.load_command_catalog(),
+                catalog.discover_ado_commands(ado_roots),
+                open_index.programs,
+            )
+            candidates = catalog.command_candidates(commands, context.fragment)
+        elif context.kind == "path":
+            candidates = catalog.path_candidates(
+                context.fragment,
+                roots,
+                extensions=catalog.path_extensions(line_before_cursor),
+            )
+        else:
+            project_index = catalog.index_sources(catalog.read_project_sources(roots))
+            merged_index = open_index.merged(project_index)
+            if context.kind in ("local", "global"):
+                candidates = catalog.symbol_candidates(
+                    merged_index, context.kind, context.fragment
+                )
+            else:
+                candidates = catalog.symbol_candidates(
+                    merged_index, "symbol", context.fragment or prefix
+                )
+
+        return catalog.dedupe_candidates(candidates)
+
+    @staticmethod
+    def _project_root_candidates(view):
+        roots = []
+        filename = view.file_name()
+        if filename:
+            roots.append(os.path.dirname(filename))
+        window = view.window()
+        if window:
+            roots.extend(window.folders())
+        return tuple(roots)
+
+    @staticmethod
+    def _open_view_texts(view):
+        window = view.window()
+        if not window:
+            return ()
+
+        texts = []
+        total_bytes = 0
+        for open_view in window.views():
+            if len(texts) >= MAX_OPEN_VIEWS:
+                break
+            if not open_view.is_valid() or open_view.id() == view.id():
+                continue
+            if not open_view.match_selector(0, "source.stata"):
+                continue
+            size = open_view.size()
+            if size > MAX_OPEN_VIEW_BYTES or total_bytes + size > MAX_OPEN_TOTAL_BYTES:
+                continue
+            texts.append(open_view.substr(sublime.Region(0, size)))
+            total_bytes += size
+        return tuple(texts)
+
+    @staticmethod
+    def _configured_ado_path_candidates():
+        global settings
+        if settings is None:
+            settings = sublime.load_settings(SETTINGS_FILE)
+        value = settings.get("ado_paths", [])
+        if isinstance(value, str):
+            value = [value]
+        if not isinstance(value, list):
+            return ()
+        return tuple(path for path in value if isinstance(path, str))
+
+    @staticmethod
+    def _standard_ado_paths():
+        paths = ["~/ado/personal", "~/ado/plus"]
+        for prefix in ("/usr/local", "/opt"):
+            paths.extend(glob.glob(os.path.join(prefix, "stata*", "ado", "site")))
+        return catalog.normalize_roots(paths)
+
+    @staticmethod
+    def _publish_if_current(
+        completion_list,
+        items,
+        view,
+        request_view_id,
+        request_change_count,
+        request_locations,
+    ):
+        is_current = (
+            view.is_valid()
+            and view.id() == request_view_id
+            and view.change_count() == request_change_count
+            and tuple(region.b for region in view.sel()) == request_locations
+        )
+        completion_list.set_completions(
+            items if is_current else [],
+            sublime.INHIBIT_WORD_COMPLETIONS,
+        )
+
+    @staticmethod
+    def _completion_items(candidates):
+        kind_map = {
+            "command": sublime.KIND_FUNCTION,
+            "path": sublime.KIND_NAVIGATION,
+            "snippet": sublime.KIND_SNIPPET,
+            "variable": sublime.KIND_VARIABLE,
+        }
+        items = []
+        for candidate in candidates:
+            kwargs = {
+                "trigger": candidate.trigger,
+                "completion": candidate.completion,
+                "annotation": candidate.annotation,
+                "kind": kind_map.get(candidate.kind, sublime.KIND_AMBIGUOUS),
+                "details": candidate.details,
+            }
+            if candidate.snippet:
+                kwargs["completion_format"] = sublime.COMPLETION_FORMAT_SNIPPET
+            items.append(sublime.CompletionItem(**kwargs))
+        return items

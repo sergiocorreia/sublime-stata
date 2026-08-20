@@ -1,14 +1,10 @@
 <snippet>
-	<content><![CDATA[
-// --------------------------------------------------------------------------
-// $1
+	<content><![CDATA[// --------------------------------------------------------------------------
+// ${1:section title}
 // --------------------------------------------------------------------------
 
-	
-]]></content>
+	$0]]></content>
 	<tabTrigger>header</tabTrigger>
-	<scope>source.stata - string - meta.local - inner-commands</scope>
-	<description>Comment header</description>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Section header</description>
 </snippet>
-
-

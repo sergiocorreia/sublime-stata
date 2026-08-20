@@ -1,13 +1,11 @@
 <snippet>
-	<content><![CDATA[
-capture program drop ${1:Name}
-program define ${1:Name}
+	<content><![CDATA[capture program drop ${1:program_name}
+program define ${1:program_name}
 
 	$0
 
-end
-]]></content>
+end]]></content>
 	<tabTrigger>prog</tabTrigger>
-	<scope>source.stata - string - meta.local - inner-commands</scope>scope>
-	<description>Program</description>description
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Define a Stata program</description>
 </snippet>

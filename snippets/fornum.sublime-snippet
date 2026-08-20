@@ -1,12 +1,8 @@
 <snippet>
-	<content><![CDATA[
-foreach ${1:num} of numlist $2 {
-	$3
-}
-]]></content>
+	<content><![CDATA[foreach ${1:num} of numlist ${2:1 3 5(5)50} {
+	$0
+}]]></content>
 	<tabTrigger>fornum</tabTrigger>
-	<scope>source.stata - string - meta.local - inner-commands</scope>
-	<description>Foreach numlist</description>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Loop over an irregular numlist</description>
 </snippet>
-
-

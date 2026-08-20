@@ -1,23 +1,15 @@
 {
-	"selector": "source.stata",
+	"selector": "source.stata, source.mata",
 	"target": "stata_exec",
 	"action": "do",
 	"file_path": "$file_path",
 	"project_path": "$project_path",
-	
+
 	"variants":
 	[
 		{
-			"name": "Trace",
-			"mode": "trace",
-		},
-		{
-			"name": "Clear all",
-			"mode": "cleanup",
-		},
-		{
-			"name": "Build",
-			"mode": "build",
-		},
+			"name": "Run Package Test (build.txt)",
+			"mode": "build"
+		}
 	]
 }

@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[count if ${1:condition}
+local ${2:scalar_name} = r(N)
+post_scalar, scalar(`$2') file("${3:scalar_name.tex}")]]></content>
+	<tabTrigger>post-scalar</tabTrigger>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Write a scalar for LaTeX</description>
+</snippet>

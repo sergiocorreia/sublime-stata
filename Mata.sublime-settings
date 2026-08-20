@@ -1,0 +1,12 @@
+{
+	"tab_size": 4,
+	"translate_tabs_to_spaces": false,
+	"rulers": [100],
+	"ensure_newline_at_eof_on_save": true,
+	"auto_complete_triggers": [
+		{
+			"selector": "source.mata - comment - string.quoted",
+			"characters": "."
+		}
+	]
+}

@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[rename ${1:old_name} ${2:new_name}]]></content>
+	<tabTrigger>rename</tabTrigger>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Rename a variable (full command name)</description>
+</snippet>

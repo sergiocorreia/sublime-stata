@@ -1,10 +1,208 @@
 {
-	"scope": "source.stata - string - meta.local - inner-commands",
-
-	"completions":
-	[
-		{ "trigger": "savefile\tSave file", "contents": "save \"${1:file}.dta\", replace" },
-		{ "trigger": "dofile\tRun noisily", "contents": "do \"${1:file}.do\""},
-		{ "trigger": "runfile\tRun silently", "contents": "run \"${1:file}.do\""}
+	"scope": "source.stata - source.mata - source.python - text.tex.latex - comment - string - meta.local",
+	"completions": [
+		{
+			"trigger": "savefile",
+			"annotation": "dataset · replace",
+			"contents": "save \"${1:file}.dta\", replace",
+			"kind": "snippet",
+			"details": "Save a Stata dataset, replacing an existing file."
+		},
+		{
+			"trigger": "usefile",
+			"annotation": "dataset · clear",
+			"contents": "use \"${1:file}.dta\", clear",
+			"kind": "snippet",
+			"details": "Load a Stata dataset and clear data currently in memory."
+		},
+		{
+			"trigger": "dofile",
+			"annotation": "do-file · noisy",
+			"contents": "do \"${1:file}.do\"",
+			"kind": "snippet",
+			"details": "Run a do-file and echo its commands."
+		},
+		{
+			"trigger": "runfile",
+			"annotation": "do-file · quiet",
+			"contents": "run \"${1:file}.do\"",
+			"kind": "snippet",
+			"details": "Run a do-file without echoing its commands."
+		},
+		{
+			"trigger": "framecreate",
+			"annotation": "frame · create",
+			"contents": "frame create ${1:name} ${2:varlist}",
+			"kind": "snippet",
+			"details": "Create a named frame, optionally declaring its variables."
+		},
+		{
+			"trigger": "framechange",
+			"annotation": "frame · change",
+			"contents": "frame change ${1:name}",
+			"kind": "snippet",
+			"details": "Make a named frame current."
+		},
+		{
+			"trigger": "frameput",
+			"annotation": "frame · subset",
+			"contents": "frame put ${1:varlist} ${2:if}, into(${3:name})",
+			"kind": "snippet",
+			"details": "Copy selected observations and variables into another frame."
+		},
+		{
+			"trigger": "frlink",
+			"annotation": "frames · link",
+			"contents": "frlink ${1:1:1} ${2:keyvars}, frame(${3:frame}) generate(${4:_frlink})",
+			"kind": "snippet",
+			"details": "Create a 1:1 or m:1 linkage from the current frame to another frame."
+		},
+		{
+			"trigger": "frget",
+			"annotation": "frames · fetch",
+			"contents": "frget ${1:varlist}, from(${2:_frlink})",
+			"kind": "snippet",
+			"details": "Copy variables through a linkage created by frlink."
+		},
+		{
+			"trigger": "collectclear",
+			"annotation": "collect · reset",
+			"contents": "collect clear",
+			"kind": "snippet",
+			"details": "Clear all collections before building a reporting table."
+		},
+		{
+			"trigger": "collectlayout",
+			"annotation": "collect · layout",
+			"contents": "collect layout (${1:row_dimension}) (${2:column_dimension})",
+			"kind": "snippet",
+			"details": "Lay out collection dimensions in table rows and columns."
+		},
+		{
+			"trigger": "collectstyle",
+			"annotation": "collect · cell style",
+			"contents": "collect style cell ${1:cell_selection}, nformat(${2:%9.2f})",
+			"kind": "snippet",
+			"details": "Apply a numeric format or other cell styling to selected collection cells."
+		},
+		{
+			"trigger": "collectexport",
+			"annotation": "collect · export",
+			"contents": "collect export \"${1:table}.docx\", replace",
+			"kind": "snippet",
+			"details": "Export the active collection to a document, workbook, or other supported format."
+		},
+		{
+			"trigger": "dtable",
+			"annotation": "descriptive table · Stata 18+",
+			"contents": "dtable ${1:continuous_vars} i.${2:factor_var}, by(${3:group}, tests) continuous(${1:continuous_vars}, statistics(mean sd)) nformat(${4:%9.2f})",
+			"kind": "snippet",
+			"details": "Build a publication-ready descriptive table with groups, tests, and explicit statistics."
+		},
+		{
+			"trigger": "etable",
+			"annotation": "estimation table · Stata 18+",
+			"contents": "etable, estimates(${1:*}) cstat(_r_b, nformat(${2:%9.3f})) cstat(_r_se, nformat(${2:%9.3f})) mstat(N) mstat(r2) showstars",
+			"kind": "snippet",
+			"details": "Tabulate stored estimation results with coefficients, standard errors, model statistics, and stars."
+		},
+		{
+			"trigger": "didregress",
+			"annotation": "DID · repeated cross-section",
+			"contents": "didregress (${1:outcome} ${2:outcome_covariates}) (${3:treatment}), group(${4:group}) time(${5:time}) vce(cluster ${4:group})",
+			"kind": "snippet",
+			"details": "Estimate difference in differences for repeated cross-sectional data."
+		},
+		{
+			"trigger": "hdidregress",
+			"annotation": "heterogeneous DID · Stata 18+",
+			"contents": "hdidregress ${1|twfe,ra,ipw,aipw|} (${2:outcome} ${3:outcome_covariates}) (${4:treatment} ${5:treatment_covariates}), group(${6:group}) time(${7:time})",
+			"kind": "snippet",
+			"details": "Estimate heterogeneous DID effects using TWFE, RA, IPW, or AIPW."
+		},
+		{
+			"trigger": "telasso",
+			"annotation": "treatment effects · lasso",
+			"contents": "telasso (${1:outcome} ${2:outcome_covariates}) (${3:treatment} ${4:treatment_covariates}), ${5|ate,atet,pomeans|}",
+			"kind": "snippet",
+			"details": "Estimate treatment effects with lasso-selected outcome and treatment models."
+		},
+		{
+			"trigger": "cate",
+			"annotation": "conditional treatment effects",
+			"contents": "cate ${1|po,aipw|} (${2:outcome} ${3:cate_covariates}) (${4:treatment}), controls(${5:model_covariates}) group(${6:group}) xfolds(${7:10})",
+			"kind": "snippet",
+			"details": "Estimate conditional average treatment effects with cross-fitting."
+		},
+		{
+			"trigger": "mediate",
+			"annotation": "causal mediation · Stata 18+",
+			"contents": "mediate (${1:outcome} ${2:outcome_covariates}, ${3|linear,logit,probit,poisson|}) (${4:mediator} ${5:mediator_covariates}, ${6|linear,logit,probit,poisson|}) (${7:treatment}), ${8|nie,nde,te,all|}",
+			"kind": "snippet",
+			"details": "Decompose treatment effects through a mediator using explicit outcome and mediator models."
+		},
+		{
+			"trigger": "lateffects",
+			"annotation": "LATE · endogenous treatment",
+			"contents": "lateffects ipwra (${1:outcome} ${2:outcome_covariates}) (${3:treatment} ${4:treatment_covariates}) (${5:instrument} ${6:instrument_covariates}), vce(cluster ${7:cluster})",
+			"kind": "snippet",
+			"details": "Estimate local average treatment effects with outcome, treatment, and instrument models."
+		},
+		{
+			"trigger": "xtswitchdid",
+			"annotation": "panel DID · treatment switching",
+			"contents": "xtswitchdid (${1:outcome} ${2:outcome_covariates}) (${3:treatment}), group(${4:group}) controlgroup(${5|all,never,notyet|}) vce(cluster ${4:group})",
+			"kind": "snippet",
+			"details": "Estimate panel DID effects when units can switch among treatment levels."
+		},
+		{
+			"trigger": "h2oml-gbregress",
+			"annotation": "H2O · gradient boosting",
+			"contents": "h2oml gbregress ${1:response} ${2:predictors}, ntrees(${3:100}) lrate(${4:0.1}) cv(${5:5}) rseed(${6:12345})",
+			"kind": "snippet",
+			"details": "Fit gradient-boosted regression to columns in the current H2O frame."
+		},
+		{
+			"trigger": "gisid",
+			"annotation": "gtools · verify identifier",
+			"contents": "gisid ${1:keyvars}${2:, missok}",
+			"kind": "snippet",
+			"details": "Efficiently assert that variables uniquely identify observations."
+		},
+		{
+			"trigger": "gegen",
+			"annotation": "gtools · grouped egen",
+			"contents": "gegen ${1:newvar} = ${2:mean}(${3:source}), by(${4:groupvars})",
+			"kind": "snippet",
+			"details": "Generate a grouped statistic with the gtools implementation of egen."
+		},
+		{
+			"trigger": "reghdfe-absorb",
+			"annotation": "reghdfe · absorbed FE",
+			"contents": "reghdfe ${1:outcome} ${2:covariates}, absorb(${3:fixed_effects}) vce(cluster ${4:cluster})",
+			"kind": "snippet",
+			"details": "Fit a linear model with high-dimensional fixed effects and clustered standard errors."
+		},
+		{
+			"trigger": "ppmlhdfe-absorb",
+			"annotation": "ppmlhdfe · absorbed FE",
+			"contents": "ppmlhdfe ${1:outcome} ${2:covariates}, absorb(${3:fixed_effects}) vce(cluster ${4:cluster})",
+			"kind": "snippet",
+			"details": "Fit PPML with high-dimensional fixed effects and clustered standard errors."
+		},
+		{
+			"trigger": "rangestat-interval",
+			"annotation": "rangestat · rolling window",
+			"contents": "rangestat (${1:mean} ${2:source}), interval(${3:timevar} ${4:-1} ${5:1}) by(${6:panelvar})",
+			"kind": "snippet",
+			"details": "Compute statistics over a numeric or time interval within groups."
+		},
+		{
+			"trigger": "importparquet",
+			"annotation": "Parquet · StataNow 19.5",
+			"contents": "import parquet using \"${1:file}.parquet\", clear",
+			"kind": "snippet",
+			"details": "Import a Parquet dataset."
+		}
 	]
 }

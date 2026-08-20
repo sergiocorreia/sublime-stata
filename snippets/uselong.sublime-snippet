@@ -1,8 +1,6 @@
 <snippet>
-	<content><![CDATA[
-use ${2} using ${1}, clear
-]]></content>
+	<content><![CDATA[use ${1:variables} using "${2:\$data/input-file.dta}", clear]]></content>
 	<tabTrigger>use-using</tabTrigger>
-	<scope>source.stata - string - meta.local</scope>
-	<description>Load dataset</description>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
+	<description>Load selected variables from a dataset</description>
 </snippet>

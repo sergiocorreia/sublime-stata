@@ -1,10 +1,24 @@
 {
+	// Stata source files use literal tabs, matching extra/STATA_STYLE_GUIDE.md.
+	"tab_size": 4,
+	"translate_tabs_to_spaces": false,
+	"rulers": [100],
 	"ensure_newline_at_eof_on_save": true,
-	"variable_completions": false,
+
+	// Linux/X11 execution. "activate_restore" briefly activates the target
+	// window; "background" delivers without raising it.
+	"linux_delivery_mode": "activate_restore",
+	"linux_command_focus_keys": ["ctrl+1"],
+	"linux_stata_executables": ["xstata-mp", "xstata-se", "xstata"],
+
+	// Extra directories searched for user/project ado completions.
+	"ado_paths": [],
+
+	// Legacy Windows Automation executable path.
 	"stata_path": "",
-	"auto_complete_triggers" :
+
+	"auto_complete_triggers":
 	[
-		{"selector": "source.mata - string.quoted - string.quoted.double.stata", "characters": "."},
 		{"selector": "meta.local.stata", "characters": ": "},
 		{"selector": "meta.local.extended.stata", "characters": "list"}
 	]

@@ -1,22 +1,96 @@
 {
 	"scope": "meta.local.list.stata",
-
-	"completions":
-	[
-		{ "trigger": "unique\tUnique elements", "contents": "uniq ${1:macname}"},
-		{ "trigger": "duplicates\tDuplicate elements", "contents": "dups ${1:macname}"},
-		{ "trigger": "sort\tSort list", "contents": "sort ${1:macname}"},
-		{ "trigger": "retokenize\tTrim extra spaces", "contents": "retokenize ${1:macname}"},
-		{ "trigger": "clean\tTrim redundant quotes", "contents": "uniq ${1:macname}"},
-
-		{ "trigger": "sizeof\tCount elements", "contents": "sizeof ${1:macname}"},
-		{ "trigger": "posof\tFind element", "contents": "posof \"${1:element}\" in ${2:macname}"},
-
-		{ "trigger": "list_or\tOR operator", "contents": "${1:macname} | ${2:macname}"},
-		{ "trigger": "list_and\tAND operator", "contents": "${1:macname} & ${2:macname}"},
-		{ "trigger": "list_diff\tDIFF operator", "contents": "${1:macname} - ${2:macname}"},
-		{ "trigger": "list_in\tIN operator", "contents": "${1:macname} in ${2:macname}"},
-		{ "trigger": "list_equal\tEQUAL operator", "contents": "${1:macname} == ${2:macname}"},
-		{ "trigger": "list_identical\tIDENTICAL operator", "contents": "${1:macname} === ${2:macname}"}
+	"completions": [
+		{
+			"trigger": "unique",
+			"annotation": "list · unique elements",
+			"contents": "uniq ${1:macname}",
+			"kind": "snippet",
+			"details": "Remove duplicate words from a local macro list."
+		},
+		{
+			"trigger": "duplicates",
+			"annotation": "list · duplicate elements",
+			"contents": "dups ${1:macname}",
+			"kind": "snippet",
+			"details": "Keep words that occur more than once in a local macro list."
+		},
+		{
+			"trigger": "sort",
+			"annotation": "list · sort",
+			"contents": "sort ${1:macname}",
+			"kind": "snippet",
+			"details": "Sort the words in a local macro list."
+		},
+		{
+			"trigger": "retokenize",
+			"annotation": "list · normalize spaces",
+			"contents": "retokenize ${1:macname}",
+			"kind": "snippet",
+			"details": "Retokenize a list and remove redundant whitespace."
+		},
+		{
+			"trigger": "clean",
+			"annotation": "list · clean quotes",
+			"contents": "clean ${1:macname}",
+			"kind": "snippet",
+			"details": "Remove redundant quotation marks from a local macro list."
+		},
+		{
+			"trigger": "sizeof",
+			"annotation": "list · count elements",
+			"contents": "sizeof ${1:macname}",
+			"kind": "snippet",
+			"details": "Return the number of words in a local macro list."
+		},
+		{
+			"trigger": "posof",
+			"annotation": "list · find element",
+			"contents": "posof \"${1:element}\" in ${2:macname}",
+			"kind": "snippet",
+			"details": "Return the position of an element in a local macro list."
+		},
+		{
+			"trigger": "list_or",
+			"annotation": "list · union",
+			"contents": "${1:macname} | ${2:macname}",
+			"kind": "snippet",
+			"details": "Form the union of two local macro lists."
+		},
+		{
+			"trigger": "list_and",
+			"annotation": "list · intersection",
+			"contents": "${1:macname} & ${2:macname}",
+			"kind": "snippet",
+			"details": "Form the intersection of two local macro lists."
+		},
+		{
+			"trigger": "list_diff",
+			"annotation": "list · difference",
+			"contents": "${1:macname} - ${2:macname}",
+			"kind": "snippet",
+			"details": "Remove the elements of the second list from the first."
+		},
+		{
+			"trigger": "list_in",
+			"annotation": "list · subset test",
+			"contents": "${1:macname} in ${2:macname}",
+			"kind": "snippet",
+			"details": "Test whether every element of one list occurs in another."
+		},
+		{
+			"trigger": "list_equal",
+			"annotation": "list · set equality",
+			"contents": "${1:macname} == ${2:macname}",
+			"kind": "snippet",
+			"details": "Test whether two lists contain the same elements."
+		},
+		{
+			"trigger": "list_identical",
+			"annotation": "list · exact equality",
+			"contents": "${1:macname} === ${2:macname}",
+			"kind": "snippet",
+			"details": "Test whether two lists contain identical words in identical order."
+		}
 	]
 }

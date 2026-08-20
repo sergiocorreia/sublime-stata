@@ -1,27 +1,14 @@
 <snippet>
-	<content><![CDATA[
-
-python:
-
-# ---------------------------
-# Imports
-# ---------------------------
+	<content><![CDATA[python:
 
 from sfi import Data
 
-# ---------------------------
-# Functions
-# ---------------------------
-
 def main():
-	pass
+	$0
 
-end
-
-]]></content>
+main()
+end]]></content>
 	<tabTrigger>python</tabTrigger>
-	<scope>source.stata - string - meta.local - inner-commands</scope>
-	<description>Python block</description>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Embedded Python block</description>
 </snippet>
-
-

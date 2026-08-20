@@ -1,12 +1,8 @@
 <snippet>
-	<content><![CDATA[
-foreach ${1:var} of varlist `$2' {
-	$3
-}
-]]></content>
+	<content><![CDATA[foreach ${1:var} of varlist ${2:variables} {
+	$0
+}]]></content>
 	<tabTrigger>forvar</tabTrigger>
-	<scope>source.stata - string - meta.local - inner-commands</scope>
-	<description>Foreach varlist</description>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Loop over a variable list</description>
 </snippet>
-
-

@@ -1,11 +1,6 @@
 <snippet>
-	<content><![CDATA[
-// -------------------------------------------------------------------------------------------------
-
-]]></content>
+	<content><![CDATA[// --------------------------------------------------------------------------]]></content>
 	<tabTrigger>hr</tabTrigger>
-	<scope>source.stata - string - meta.local - inner-commands</scope>
-	<description>Comment horizontal rule</description>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Section rule</description>
 </snippet>
-
-

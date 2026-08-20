@@ -1,13 +1,10 @@
 <snippet>
-	<content><![CDATA[
-* ===========================================================================
-* $1
+	<content><![CDATA[* ===========================================================================
+* ${1:do-file title}
 * ===========================================================================
 
-]]></content>
+	$0]]></content>
 	<tabTrigger>topheader</tabTrigger>
-	<scope>source.stata - string - meta.local - inner-commands</scope>
-	<description>Top header</description>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Do-file title header</description>
 </snippet>
-
-

@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[import delimited using "${1:\$sources/input-file.tsv}", clear varnames(1)]]></content>
+	<tabTrigger>import-delimited</tabTrigger>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Import a delimited text file</description>
+</snippet>

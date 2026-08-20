@@ -1,8 +1,9 @@
 <snippet>
-	<content><![CDATA[
-merge ${3:m}:${4:1} ${2:varlist} using "${1:`fn'}", keep(${5:master match}) ${6://} keepus($7) nogen nolab nonote
-]]></content>
+	<content><![CDATA[merge ${1:m:1} ${2:bank_id date} using "${3:`using'}", keep(master match) keepusing(${4:variables})
+tab _merge
+assert _merge != 2
+drop _merge]]></content>
 	<tabTrigger>merge</tabTrigger>
-	<scope>source.stata - string - meta.local</scope>
-	<description>Merge datasets</description>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local</scope>
+	<description>Merge with an explicit contract</description>
 </snippet>

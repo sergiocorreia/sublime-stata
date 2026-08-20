@@ -1,8 +1,6 @@
 <snippet>
-	<content><![CDATA[
-join ${3:vars}, from("${1:`fn'}") by(${2:id}) ${4://} keep(${5:master match}) assert(${6:match}) unique nogen nolabel nonotes
-]]></content>
+	<content><![CDATA[join ${1:variables}, from("${2:`using'}") by(${3:bank_id}) keep(${4:master match using})]]></content>
 	<tabTrigger>join</tabTrigger>
-	<scope>source.stata - string - meta.local - inner-commands</scope>
-	<description>ftools alternative to merge</description>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Join datasets with ftools</description>
 </snippet>

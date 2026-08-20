@@ -1,12 +1,8 @@
 <snippet>
-	<content><![CDATA[
-foreach $1 of local $2 {
-	$3
-}
-]]></content>
+	<content><![CDATA[foreach ${1:item} of local ${2:local_name} {
+	$0
+}]]></content>
 	<tabTrigger>forlocal</tabTrigger>
-	<scope>source.stata - string - meta.local - inner-commands</scope>
-	<description>Foreach local</description>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Loop over a local macro</description>
 </snippet>
-
-

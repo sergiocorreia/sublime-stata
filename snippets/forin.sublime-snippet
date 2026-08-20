@@ -1,12 +1,8 @@
 <snippet>
-	<content><![CDATA[
-foreach $1 in $2 {
-	$3
-}
-]]></content>
+	<content><![CDATA[foreach ${1:item} in ${2:items} {
+	$0
+}]]></content>
 	<tabTrigger>forin</tabTrigger>
-	<scope>source.stata - string - meta.local - inner-commands</scope>
-	<description>Foreach numlist</description>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Loop over literal items</description>
 </snippet>
-
-

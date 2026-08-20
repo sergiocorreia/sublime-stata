@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[mi(${1:varlist})]]></content>
+	<tabTrigger>mi-fn</tabTrigger>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - comment - string</scope>
+	<description>Compact missing-value test</description>
+</snippet>

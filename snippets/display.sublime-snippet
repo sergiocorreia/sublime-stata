@@ -1,8 +1,6 @@
 <snippet>
-	<content><![CDATA[
-di as ${2:text} "$1"
-]]></content>
+	<content><![CDATA[display as ${1:text} "${2:message}"]]></content>
 	<tabTrigger>display</tabTrigger>
-	<scope>source.stata - string - meta.local - inner-commands</scope>
-	<description>Display</description>
+	<scope>source.stata - source.mata - source.python - text.tex.latex - string - meta.local - inner-commands</scope>
+	<description>Display a message</description>
 </snippet>
