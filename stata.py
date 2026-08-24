@@ -1,13 +1,14 @@
 """Platform-neutral execution support for the Sublime Stata package.
 
 This module deliberately has no dependency on Sublime Text. On Linux it
-drives an existing Stata GUI through xdotool; Windows imports remain lazy.
+starts or drives a Stata GUI through xdotool; Windows imports remain lazy.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+import math
 import os
 import re
 import shutil
@@ -15,12 +16,16 @@ import stat
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import uuid
 
 
 DEFAULT_LINUX_EXECUTABLES = ("xstata-mp", "xstata-se", "xstata")
 DEFAULT_COMMAND_FOCUS_KEYS = ("ctrl+1",)
+LINUX_STARTUP_TIMEOUT_SECONDS = 20.0
+LINUX_STARTUP_POLL_SECONDS = 0.2
+LINUX_STARTUP_SETTLE_SECONDS = 0.5
 TEMP_PREFIX = "sublime-stata-"
 TEMP_SUFFIX = ".do"
 TEMP_MAX_AGE_SECONDS = 24 * 60 * 60
@@ -412,11 +417,11 @@ def choose_target_window(
 
 
 class XdotoolBackend:
-    """Discover and control an existing Stata GUI in an X11 session."""
+    """Discover, start, and control a Stata GUI in an X11 session."""
 
     def __init__(self, binary="xdotool", xprop_binary="xprop", env=None,
                  runner=None, which=None, process_executable=None, sleeper=None,
-                 modifiers_pressed=None):
+                 modifiers_pressed=None, launcher=None):
         self.binary = binary
         self.xprop_binary = xprop_binary
         self.env = os.environ if env is None else env
@@ -425,12 +430,26 @@ class XdotoolBackend:
         self.process_executable = process_executable or self._read_process_executable
         self.sleep = sleeper or time.sleep
         self.modifiers_pressed = modifiers_pressed or self._x11_modifiers_pressed
+        self.launcher = launcher or self._subprocess_launcher
+        self._launch_lock = threading.Lock()
+        self._launched_processes = []
 
     @staticmethod
     def _subprocess_runner(argv):
         return subprocess.run(
             argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             text=True, timeout=10, check=False,
+        )
+
+    def _subprocess_launcher(self, argv):
+        return subprocess.Popen(
+            argv,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            env=dict(self.env),
+            start_new_session=True,
+            close_fds=True,
         )
 
     @staticmethod
@@ -691,6 +710,96 @@ class XdotoolBackend:
                 by_process[key] = (score, window)
         return sorted(
             (item[1] for item in by_process.values()), key=lambda window: window.stack_index
+        )
+
+    @staticmethod
+    def _launch_order(executables) -> list[str]:
+        """Return unique launch candidates with graphical MP builds first."""
+
+        candidates = []
+        for item in executables:
+            candidate = str(item or "").strip()
+            if candidate and candidate not in candidates:
+                candidates.append(candidate)
+
+        def is_mp(candidate: str) -> bool:
+            name = os.path.basename(candidate).lower().replace("_", "-")
+            return bool(re.search(r"stata(?:now)?-?mp(?:$|[-.])", name))
+
+        return (
+            [candidate for candidate in candidates if is_mp(candidate)]
+            + [candidate for candidate in candidates if not is_mp(candidate)]
+        )
+
+    def launch_stata(self, executables=DEFAULT_LINUX_EXECUTABLES) -> str:
+        """Start the preferred configured graphical Stata executable from PATH."""
+
+        self.validate_environment()
+        launch_order = self._launch_order(executables)
+        executable = None
+        for candidate in launch_order:
+            expanded = os.path.expandvars(os.path.expanduser(candidate))
+            executable = self.which(expanded)
+            if executable:
+                break
+        if not executable:
+            expected = ", ".join(launch_order) or ", ".join(DEFAULT_LINUX_EXECUTABLES)
+            raise StataEnvironmentError(
+                "No graphical Stata executable was found in PATH. Tried: {}".format(
+                    expected
+                )
+            )
+        try:
+            process = self.launcher([executable])
+        except OSError as error:
+            raise StataEnvironmentError(
+                "Could not start {}: {}".format(executable, error)
+            ) from error
+        # Retain the Popen object while the plugin is loaded. Stata remains an
+        # independent desktop process, while retaining the handle avoids an
+        # unhelpful subprocess warning during normal long-running sessions.
+        if process is not None:
+            self._launched_processes.append(process)
+        return executable
+
+    def discover_or_launch_windows(
+        self,
+        executables=DEFAULT_LINUX_EXECUTABLES,
+        timeout=LINUX_STARTUP_TIMEOUT_SECONDS,
+        poll_interval=LINUX_STARTUP_POLL_SECONDS,
+        settle_time=LINUX_STARTUP_SETTLE_SECONDS,
+    ) -> tuple[list[StataWindow], bool]:
+        """Return visible Stata windows, starting one when none exists.
+
+        The lock prevents simultaneous Sublime build jobs from launching more
+        than one replacement Stata process.
+        """
+
+        with self._launch_lock:
+            windows = self.discover_windows(executables)
+            if windows:
+                return windows, False
+
+            executable = self.launch_stata(executables)
+            interval = max(0.01, float(poll_interval))
+            timeout_seconds = max(0.0, float(timeout))
+            settle_seconds = max(0.0, float(settle_time))
+            attempts = max(1, math.ceil(timeout_seconds / interval))
+            for _attempt in range(attempts):
+                self.sleep(interval)
+                windows = self.discover_windows(executables)
+                if windows:
+                    if settle_seconds:
+                        self.sleep(settle_seconds)
+                        refreshed = self.discover_windows(executables)
+                        if refreshed:
+                            windows = refreshed
+                    return windows, True
+
+        raise StataWindowError(
+            "Started {}, but no visible Stata GUI window appeared within {:g} seconds.".format(
+                executable, timeout_seconds
+            )
         )
 
     def _key(self, window_id: int, key: str, background: bool) -> None:
@@ -989,7 +1098,7 @@ class Stata:
         if self.platform_name == "windows":
             self.backend.deliver(command)
             return path
-        windows = self.backend.discover_windows(
+        windows, _launched = self.backend.discover_or_launch_windows(
             kwargs.get("executables", DEFAULT_LINUX_EXECUTABLES)
         )
         window = kwargs.get("window") or choose_recent_window(windows)
@@ -1003,7 +1112,7 @@ class Stata:
         self._require_backend()
         if self.platform_name == "windows":
             return self.backend.deliver(command)
-        windows = self.backend.discover_windows(
+        windows, _launched = self.backend.discover_or_launch_windows(
             kwargs.get("executables", DEFAULT_LINUX_EXECUTABLES)
         )
         window = kwargs.get("window") or choose_recent_window(windows)

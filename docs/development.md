@@ -56,11 +56,13 @@ format.
 3. Use source paths containing spaces and Unicode and confirm Stata changes to the correct directory.
 4. Verify the default `Ctrl+1` sequence focuses the Command pane, then test a configured alternative.
 5. Open two Stata windows, choose each target in turn, then restore most-recent targeting.
-6. Close a pinned window and confirm the next run stops with a stale-pin error and does not execute in
-   another Stata session.
+6. With two Stata sessions open, close the pinned window and confirm the next run stops with a
+   stale-pin error and does not execute in the other session. Then close every Stata session and
+   confirm the next run starts a replacement and clears the obsolete pin.
 7. Test both `activate_restore` and `background` delivery. While Stata is busy, verify the package says
    only that code was sent and never retries automatically.
-8. Verify actionable errors for missing `xdotool`, Wayland, no Stata window, and a stale pin.
+8. Verify actionable errors for missing `xdotool`, Wayland, a launch timeout or missing Stata
+   executable, and a stale pin.
 9. Verify <kbd>F1</kbd> for selected text and the command under the caret.
 10. Toggle quoted, macro-based, and unquoted `save`/`use` lines using multiple cursors. Confirm one undo
     reverts the entire operation and ambiguous/continued lines remain unchanged.

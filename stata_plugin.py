@@ -80,9 +80,9 @@ def _linux_options():
     return mode, tuple(focus_keys), tuple(executables)
 
 
-def _discover_linux_windows():
+def _discover_or_launch_linux_windows():
     _mode, _focus_keys, executables = _linux_options()
-    return _get_linux_backend().discover_windows(executables)
+    return _get_linux_backend().discover_or_launch_windows(executables)
 
 
 def _target_for_window(sublime_window, candidates):
@@ -92,23 +92,27 @@ def _target_for_window(sublime_window, candidates):
 
 def _deliver(sublime_window, command):
     if sublime.platform() == "linux":
-        mode, focus_keys, _executables = _linux_options()
+        mode, focus_keys, executables = _linux_options()
         backend = _get_linux_backend()
         restore_window = (
             backend.capture_sublime_window()
             if mode == "activate_restore" else None
         )
-        candidates = _discover_linux_windows()
+        candidates, launched = backend.discover_or_launch_windows(executables)
+        if launched:
+            # With no compatible session left, a pin can only refer to the
+            # closed process that triggered this replacement launch.
+            _pinned_targets.pop(sublime_window.id(), None)
         target = _target_for_window(sublime_window, candidates)
         backend.deliver(
             target, command, mode, focus_keys, restore_window=restore_window
         )
-        return target
+        return target, launched
     if sublime.platform() == "windows":
         _get_windows_backend().deliver(command)
-        return None
+        return None, False
     raise stata.StataEnvironmentError(
-        "Sending code to an existing Stata GUI is currently supported on Linux/X11 and Windows"
+        "Sending code to Stata is currently supported on Linux/X11 and Windows"
     )
 
 
@@ -117,9 +121,15 @@ def _run_script(sublime_window, contents):
         manager = _get_temp_files()
         manager.cleanup_stale()
         path = manager.create(contents)
-        target = _deliver(sublime_window, stata.format_do_command(path))
+        target, launched = _deliver(sublime_window, stata.format_do_command(path))
         if target is None:
             _status("Sent do-file to Stata")
+        elif launched:
+            _status(
+                "Started Stata and sent do-file to {}".format(
+                    target.title or "Stata"
+                )
+            )
         else:
             _status("Sent do-file to {}".format(target.title or "Stata"))
     except Exception as error:
@@ -188,7 +198,10 @@ class StataChooseTargetWindowCommand(sublime_plugin.WindowCommand):
 
         def discover():
             try:
-                candidates = list(reversed(_discover_linux_windows()))
+                candidates, launched = _discover_or_launch_linux_windows()
+                candidates = list(reversed(candidates))
+                if launched:
+                    _pinned_targets.pop(self.window.id(), None)
                 stata.choose_recent_window(candidates)
             except Exception as error:
                 _error(error)
@@ -280,4 +293,3 @@ class StataToggleDatasetIoCommand(sublime_plugin.TextCommand):
             ))
         else:
             sublime.status_message("No simple save/use command found on the selected lines")
-

@@ -2,10 +2,10 @@
 
 A Sublime Text 4 package for writing and running Stata do-files, ado-files, and Mata code.
 
-The Linux build bridge is designed for research sessions where Stata is already open: press
-<kbd>Ctrl+B</kbd> in Sublime Text and the selected code—or the full unsaved buffer when there is no
-selection—runs in the chosen Stata GUI window. The existing Stata session, data, frames, globals, and
-installed commands stay available.
+The Linux build bridge runs selected code—or the full unsaved buffer when there is no selection—in a
+graphical Stata session. It reuses the chosen Stata GUI window when one is open. Otherwise, it starts
+the graphical executable available on `PATH`, preferring `xstata-mp`, and sends the pending code after
+the window appears. Existing session data, frames, globals, and installed commands stay available.
 
 ## Highlights
 
@@ -24,7 +24,7 @@ installed commands stay available.
 
 - Sublime Text build 4205 or newer. The package explicitly uses Sublime's embedded Python 3.14
   environment; your system Python is unrelated.
-- Stata with an already-running graphical Linux session for <kbd>Ctrl+B</kbd> execution.
+- A graphical Stata Linux executable on `PATH`, or an already-running compatible Stata GUI session.
 - Linux/X11 and [`xdotool`](https://github.com/jordansissel/xdotool) for the active-window bridge.
 
 Wayland does not provide the X11 window search and input facilities used by this bridge. Syntax,
@@ -37,7 +37,7 @@ session. See [Troubleshooting](docs/troubleshooting.md#wayland-is-not-supported-
 2. In Sublime Text, choose **Preferences > Browse Packages…**.
 3. Clone or symlink this repository into that directory with the exact folder name `Stata`.
 4. Restart Sublime Text, open a `.do` file, and choose **Tools > Build System > Stata**.
-5. Start Stata, then press <kbd>Ctrl+B</kbd> in Sublime Text.
+5. Press <kbd>Ctrl+B</kbd>. If Stata is not open, the package starts it automatically.
 
 For commands and platform-neutral installation details, see [Installation](docs/installation.md).
 

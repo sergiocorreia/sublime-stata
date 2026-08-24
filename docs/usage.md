@@ -19,6 +19,8 @@ unchanged.
 
 The default Linux delivery mode briefly activates Stata, focuses its Command window, submits the
 temporary do-file, and restores Sublime Text. The command itself continues asynchronously in Stata.
+If no compatible GUI window is open, the package starts Stata from `PATH`, preferring the configured
+MP executable, waits for its window, and then submits the command.
 
 ## Choosing among Stata windows
 
@@ -28,9 +30,9 @@ Automatic targeting uses the most recently active compatible Stata window.
 - `Stata: Use Most Recent Window` clears that choice and resumes automatic targeting.
 
 A pinned choice lasts for the current Sublime window until it is unpinned or that Sublime window
-closes. If the target Stata window closes first, execution stops with an error instead of risking
-delivery to a different research session. Choose another target or run `Stata: Use Most Recent Window`
-explicitly.
+closes. If the target Stata window closes while another compatible session remains, execution stops
+with an error instead of risking delivery to that different research session. If no compatible session
+remains, the automatic replacement launch clears the obsolete pin and uses the newly started session.
 
 ## Dataset save/use toggle
 
@@ -102,9 +104,10 @@ Command window in the supported Linux GUI. After these configured keys, the brid
 
 ### `linux_stata_executables`
 
-Executable basenames or absolute paths used to identify compatible Stata GUI processes. Put the
-entries in any order; this is an identity allowlist, while the topmost compatible X11 window determines
-automatic targeting.
+Executable basenames or absolute paths used to identify compatible Stata GUI processes and to start
+Stata when none is open. The list remains an identity allowlist for existing windows. For automatic
+launch, MP entries are preferred and the remaining entries retain their configured order; basenames
+must be available on the `PATH` inherited by Sublime Text.
 
 ### `ado_paths`
 

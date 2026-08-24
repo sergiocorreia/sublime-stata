@@ -21,19 +21,22 @@
    when necessary.
 3. An asynchronous callback creates one private temporary do-file.
 4. The platform coordinator selects the isolated Linux or Windows backend.
-5. Linux discovers visible candidates, validates a pin or chooses the topmost candidate, and performs
-   exactly one configured delivery sequence.
-6. The temporary file remains available for asynchronous Stata execution and is eligible for cleanup
+5. Linux discovers visible candidates. If none exists, it starts the preferred configured GUI
+   executable and waits for its X11 window.
+6. Linux validates a pin or chooses the topmost candidate and performs exactly one configured delivery
+   sequence.
+7. The temporary file remains available for asynchronous Stata execution and is eligible for cleanup
    only after 24 hours.
 
-There is no automatic Stata launch, batch fallback, clipboard transport, live-session completion
-protocol, Wayland backend, or macOS execution backend.
+There is no batch fallback, clipboard transport, live-session completion protocol, Wayland backend,
+or macOS execution backend.
 
 ## Safety boundaries
 
 - External commands are always invoked with argument arrays and never through a shell.
 - Only a one-line `do` or `help` command is injected; source contents are never typed or logged.
-- Stale pins and reused X11 IDs fail closed.
+- Stale pins and reused X11 IDs fail closed when another compatible session exists. A pin is cleared
+  only after zero sessions remain and the package deliberately starts a replacement.
 - Delivery modes never retry one another.
 - Restoration failure warns that code may already have been sent.
 - Temporary cleanup requires an exact generated filename, a regular file, sufficient age, and current

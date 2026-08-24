@@ -2,9 +2,10 @@
 
 ## Supported setup
 
-The active-window build bridge currently supports Linux desktop sessions running X11. It controls an
-already-open Stata GUI with `xdotool`, preserving the session's data and state. Sublime Text build 4205
-or newer is required because this package selects the embedded Python 3.14 API environment.
+The active-window build bridge currently supports Linux desktop sessions running X11. It controls a
+Stata GUI with `xdotool`, preserving an existing session's data and state, and starts the graphical
+executable from `PATH` when no compatible window is open. Sublime Text build 4205 or newer is required
+because this package selects the embedded Python 3.14 API environment.
 
 Sublime's own Python is used; do not install Python 3.14 or Python packages into the system interpreter
 for this package. See Sublime Text's official documentation for
@@ -69,8 +70,7 @@ installation method while developing this package.
 1. Open a `.do`, `.ado`, or `.mata` file.
 2. If necessary, choose **View > Syntax > Stata** (or **Mata** for a standalone Mata file).
 3. Choose **Tools > Build System > Stata**.
-4. Start the Stata GUI.
-5. Press <kbd>Ctrl+B</kbd>.
+4. Press <kbd>Ctrl+B</kbd>. The package starts the Stata GUI if necessary.
 
 When more than one Stata window is open, run `Stata: Choose Target Window` from the Command Palette
 to pin one. Run `Stata: Use Most Recent Window` to return to automatic selection.
@@ -89,6 +89,9 @@ basenames or absolute paths. For example:
     ]
 }
 ```
+
+When launching, MP entries are preferred even if they occur later in the list. Other entries retain
+their listed order.
 
 See [Usage and settings](usage.md#settings) for every supported option.
 

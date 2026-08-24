@@ -194,6 +194,7 @@ class XdotoolTests(unittest.TestCase):
         process_executable=lambda pid: "/opt/stata/xstata-mp",
         sleeper=None,
         modifiers_pressed=None,
+        launcher=None,
     ):
         return stata.XdotoolBackend(
             env={"DISPLAY": ":0", "XDG_SESSION_TYPE": "x11"},
@@ -202,6 +203,7 @@ class XdotoolTests(unittest.TestCase):
             process_executable=process_executable,
             sleeper=sleeper or (lambda seconds: None),
             modifiers_pressed=modifiers_pressed or (lambda: False),
+            launcher=launcher,
         )
 
     def test_discovery_enumerates_windows_and_accepts_custom_maintitle(self):
@@ -255,6 +257,123 @@ class XdotoolTests(unittest.TestCase):
         search_calls = [call for call in calls if call[1] == "search"]
         self.assertEqual(len(search_calls), 1)
         self.assertIn("--onlyvisible", search_calls[0])
+
+    def test_missing_window_launches_mp_from_path_and_waits_for_gui(self):
+        launches = []
+        sleeps = []
+        searches = [0]
+
+        def runner(argv):
+            if argv[0] == "/usr/bin/xprop":
+                return Result('WM_CLASS(STRING) = "xstata-mp", "Stata"\n')
+            command = argv[1]
+            if command == "search":
+                searches[0] += 1
+                return Result(returncode=1) if searches[0] == 1 else Result("77\n")
+            if command == "getwindowpid":
+                return Result("100")
+            if command == "getwindowname":
+                return Result("Stata/MP 19.0")
+            if command == "getwindowgeometry":
+                return Result("WIDTH=1200\nHEIGHT=800\n")
+            raise AssertionError(argv)
+
+        backend = self.backend(
+            runner,
+            sleeper=sleeps.append,
+            launcher=lambda argv: launches.append(argv),
+        )
+        windows, launched = backend.discover_or_launch_windows(
+            ["xstata", "xstata-se", "xstata-mp"],
+            timeout=0.2,
+            poll_interval=0.1,
+            settle_time=0.3,
+        )
+        self.assertTrue(launched)
+        self.assertEqual(launches, [["/usr/bin/xstata-mp"]])
+        self.assertEqual([window.window_id for window in windows], [77])
+        self.assertEqual(sleeps, [0.1, 0.3])
+
+    def test_existing_window_is_reused_without_launching(self):
+        launches = []
+
+        def runner(argv):
+            if argv[0] == "/usr/bin/xprop":
+                return Result('WM_CLASS(STRING) = "xstata-mp", "Stata"\n')
+            command = argv[1]
+            if command == "search":
+                return Result("77\n")
+            if command == "getwindowpid":
+                return Result("100")
+            if command == "getwindowname":
+                return Result("Stata/MP 19.0")
+            if command == "getwindowgeometry":
+                return Result("WIDTH=1200\nHEIGHT=800\n")
+            raise AssertionError(argv)
+
+        backend = self.backend(runner, launcher=lambda argv: launches.append(argv))
+        windows, launched = backend.discover_or_launch_windows()
+        self.assertFalse(launched)
+        self.assertEqual(launches, [])
+        self.assertEqual([window.window_id for window in windows], [77])
+
+    def test_launch_reports_when_no_graphical_stata_is_on_path(self):
+        backend = stata.XdotoolBackend(
+            env={"DISPLAY": ":0", "XDG_SESSION_TYPE": "x11"},
+            runner=lambda argv: Result(),
+            which=lambda binary: "/usr/bin/xdotool" if binary == "xdotool" else None,
+            modifiers_pressed=lambda: False,
+        )
+        with self.assertRaisesRegex(
+            stata.StataEnvironmentError, "No graphical Stata executable.*PATH"
+        ):
+            backend.launch_stata()
+
+    def test_launch_falls_back_when_mp_is_not_on_path(self):
+        launches = []
+
+        def which(binary):
+            available = {
+                "xdotool": "/usr/bin/xdotool",
+                "xstata-se": "/opt/stata/xstata-se",
+                "xstata": "/opt/stata/xstata",
+            }
+            return available.get(binary)
+
+        backend = stata.XdotoolBackend(
+            env={"DISPLAY": ":0", "XDG_SESSION_TYPE": "x11"},
+            runner=lambda argv: Result(),
+            which=which,
+            modifiers_pressed=lambda: False,
+            launcher=lambda argv: launches.append(argv),
+        )
+        executable = backend.launch_stata()
+        self.assertEqual(executable, "/opt/stata/xstata-se")
+        self.assertEqual(launches, [["/opt/stata/xstata-se"]])
+
+    def test_launch_timeout_reports_the_started_executable(self):
+        launches = []
+        searches = []
+
+        def runner(argv):
+            if argv[1] == "search":
+                searches.append(argv)
+                return Result(returncode=1)
+            raise AssertionError(argv)
+
+        backend = self.backend(
+            runner,
+            launcher=lambda argv: launches.append(argv),
+        )
+        with self.assertRaisesRegex(
+            stata.StataWindowError,
+            r"Started /usr/bin/xstata-mp.*within 0\.2 seconds",
+        ):
+            backend.discover_or_launch_windows(
+                timeout=0.2, poll_interval=0.1, settle_time=0
+            )
+        self.assertEqual(launches, [["/usr/bin/xstata-mp"]])
+        self.assertEqual(len(searches), 3)
 
     def test_absolute_executable_settings_require_exact_realpath(self):
         allowed = stata.XdotoolBackend._allowed_executable
@@ -491,8 +610,8 @@ class XdotoolTests(unittest.TestCase):
                 return "/tmp/only.do"
 
         class Backend:
-            def discover_windows(self, executables):
-                return [stata.StataWindow(1, "Stata/MP 19.0")]
+            def discover_or_launch_windows(self, executables):
+                return [stata.StataWindow(1, "Stata/MP 19.0")], False
 
             def deliver(self, window, command, mode, focus_keys):
                 return None

@@ -37,14 +37,23 @@ native Wayland transport should be designed and tested separately.
 
 ## No Stata window was found
 
-1. Start the graphical Stata executable, not console Stata.
-2. Confirm its process name:
+When no compatible window is visible, the package normally starts the first available graphical
+executable, preferring MP. If startup fails or times out:
+
+1. Confirm that the graphical executable—not console Stata—is on Sublime Text's inherited `PATH`:
+
+   ```sh
+   command -v xstata-mp || command -v xstata-se || command -v xstata
+   ```
+
+2. If Stata is already running, confirm its process name:
 
    ```sh
    ps -eo pid,comm,args | grep -E '[x]stata(-mp|-se)?'
    ```
 
-3. Add its basename or absolute path to `linux_stata_executables`.
+3. Add its basename or absolute path to `linux_stata_executables`. Absolute paths can also be launched
+   when their executable is not on `PATH`.
 4. Run `Stata: Use Most Recent Window` and try <kbd>Ctrl+B</kbd> again.
 
 To inspect visible titles manually:
@@ -64,8 +73,10 @@ usual Stata/StataNow title.
 
 Run `Stata: Choose Target Window` and select the intended session. The chosen X11 window is pinned to
 the current Sublime window until `Stata: Use Most Recent Window` is run or that Sublime window closes.
-If the target closes first, the next execution stops with a stale-pin error; the package never silently
-redirects research code to another Stata session.
+If the target closes while another compatible session remains, the next execution stops with a
+stale-pin error; the package never silently redirects research code to that other session. If every
+compatible session has closed, the package deliberately starts a replacement and clears the obsolete
+pin.
 
 ## Stata activates but the command does not run
 

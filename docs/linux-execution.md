@@ -2,9 +2,8 @@
 
 ## What Ctrl+B sends
 
-The Linux backend never launches Stata and never starts a batch or PyStata session. It writes the
-in-memory selection or buffer to a private temporary do-file and types one command into an already
-running graphical Stata session:
+The Linux backend writes the in-memory selection or buffer to a private temporary do-file and types
+one command into a graphical Stata session:
 
 ```stata
 do `"/tmp/sublime-stata-<unique-id>.do"'
@@ -13,6 +12,13 @@ do `"/tmp/sublime-stata-<unique-id>.do"'
 This is why the submitted code can use the target window's current data, frames, macros, estimates,
 and installed commands. It is also why Linux execution requires X11 and `xdotool`: Stata Automation
 is Windows-only, while batch mode creates a different Stata process.
+
+If no compatible window is visible, the backend starts a configured graphical executable from
+`PATH`. MP candidates are tried first, followed by the remaining `linux_stata_executables` entries in
+their configured order. The default preference is `xstata-mp`, `xstata-se`, then `xstata`. The backend
+waits up to 20 seconds for a visible GUI, allows a short initialization interval, and then performs the
+same one-time delivery sequence. Concurrent build jobs share a launch lock so they do not each start a
+new Stata process. This is a GUI launch, not a batch or PyStata fallback.
 
 ## Source preparation
 
@@ -38,6 +44,10 @@ Without a pin, the topmost compatible Stata window is used. `Stata: Choose Targe
 PID, and X11 ID and pins the complete window identity to the current Sublime window. A stale or reused
 identity stops with an error; it never redirects code to another Stata session. Use `Stata: Use Most
 Recent Window` to opt back into automatic targeting.
+
+When no compatible session remains and the package starts a replacement, any pin owned by that
+Sublime window is cleared because its process no longer exists. Pins are never cleared merely because
+a different compatible session is already open.
 
 ## Delivery modes
 

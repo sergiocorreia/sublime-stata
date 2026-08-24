@@ -5,6 +5,8 @@
 ### Added
 
 - Linux/X11 delivery to an already-running Stata GUI through `xdotool`.
+- Automatic Linux GUI startup when no compatible Stata window is open, preferring Stata/MP from
+  `PATH`.
 - Explicit Stata-window selection and most-recent-window targeting.
 - Contextual <kbd>F1</kbd> help and the <kbd>Ctrl+Alt+U</kbd> dataset save/use toggle.
 - Runtime completions for current Stata commands and configured personal ADO paths.
