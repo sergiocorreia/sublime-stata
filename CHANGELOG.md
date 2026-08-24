@@ -14,6 +14,8 @@
 
 ### Changed
 
+- Avoid xdotool's modifier snapshot/restore path during Linux delivery, preventing synthetic keys
+  from remaining logically held and continuously resetting the desktop idle timer.
 - Selected Sublime Text's embedded Python 3.14 runtime explicitly.
 - Updated syntax coverage for modern Stata and standalone Mata files.
 - Made literal tabs and a 100-column ruler the Stata source defaults.

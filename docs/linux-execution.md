@@ -46,6 +46,11 @@ released, remembers the active Sublime X11 window, activates Stata, sends the co
 focus sequence (default `Ctrl+1`), presses Escape, types the single `do` command, presses Return, and
 restores Sublime in a `finally` path. The short focus flash is expected.
 
+The bridge checks that physical modifiers are released before delivery and deliberately does not use
+xdotool's `--clearmodifiers` option. That option clears and then synthetically restores a snapshot of
+the modifier state; a physical release during that interval can otherwise leave the XTEST keyboard
+with a logically held modifier.
+
 `background` sends the same focus and typing sequence to the target window without activating it. It
 is experimental because window managers and applications may ignore synthetic input sent to an
 inactive window. The backend never retries with another mode, which prevents accidental duplicate

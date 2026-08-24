@@ -79,6 +79,22 @@ a window that has not been activated. Delivery modes are never retried automatic
 reports a delivery error, inspect the Stata Command and Results windows before pressing
 <kbd>Ctrl+B</kbd> again.
 
+## A key repeats or the display never becomes idle
+
+Check whether X11 believes its synthetic keyboard has a held key:
+
+```sh
+xinput query-state "Virtual core XTEST keyboard" | grep '=down'
+```
+
+The bridge waits for physical modifiers to be released and does not use xdotool's
+`--clearmodifiers` option. Older versions used that option, whose modifier snapshot/restore behavior
+can leave a synthetic modifier logically down if the physical key is released at the wrong moment.
+
+Logging out of the X11 session clears all synthetic key state. If the reported key is known, a
+targeted `xdotool keyup KEY_NAME` also releases it without restarting the session. Do not guess at
+key names while work is unsaved; inspect the keycode with `xmodmap -pke` first.
+
 ## Sublime stays on the wrong build system
 
 Open a Stata file, then choose **Tools > Build System > Stata**. The build selector covers both

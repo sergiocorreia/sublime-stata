@@ -694,14 +694,14 @@ class XdotoolBackend:
         )
 
     def _key(self, window_id: int, key: str, background: bool) -> None:
-        arguments = ["key", "--clearmodifiers"]
+        arguments = ["key"]
         if background:
             arguments += ["--window", str(window_id)]
         arguments.append(key)
         self._run(arguments)
 
     def _type(self, window_id: int, command: str, background: bool) -> None:
-        arguments = ["type", "--clearmodifiers", "--delay", "1"]
+        arguments = ["type", "--delay", "1"]
         if background:
             arguments += ["--window", str(window_id)]
         arguments.append(command)
@@ -719,7 +719,10 @@ class XdotoolBackend:
             )
 
         # Ctrl+B may still be physically held when Sublime invokes us. Wait for
-        # the actual X11 modifier state to clear before changing focus.
+        # the actual X11 modifier state to clear before changing focus. Do not
+        # also pass xdotool's --clearmodifiers: it snapshots and later restores
+        # modifiers with synthetic key events, which can leave a modifier stuck
+        # if its physical state changes while xdotool is running.
         self._wait_for_modifier_release()
         background = mode == "background"
         original = None

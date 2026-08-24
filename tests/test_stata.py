@@ -291,11 +291,12 @@ class XdotoolTests(unittest.TestCase):
             ["ctrl+1"],
         )
         self.assertNotIn("windowactivate", [call[1] for call in calls])
-        self.assertEqual(calls[0], ["xdotool", "key", "--clearmodifiers", "--window", "77", "ctrl+1"])
+        self.assertEqual(calls[0], ["xdotool", "key", "--window", "77", "ctrl+1"])
         self.assertEqual(calls[1][-1], "Escape")
         self.assertEqual(calls[2][1], "type")
         self.assertEqual(calls[2][-1], command)
         self.assertEqual(calls[3][-1], "Return")
+        self.assertFalse(any("--clearmodifiers" in call for call in calls))
         self.assertEqual(sleeps, [0.03])
 
     def test_activate_restore_sequence_ends_on_original_window(self):
