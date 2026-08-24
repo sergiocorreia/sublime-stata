@@ -64,9 +64,20 @@ regress outcome i.`factor_macro'
 
 dtable income age ///
     i.region, by(treatment) ///
-//  ^ storage.modifier.factor-variable.stata
-//  ^ - support.function.command.stata
     continuous(income, statistics(mean sd))
+//  ^^^^^^^^^^ meta.command.stata
+//  ^ - support.function.command.stata
+
+order price weight ///
+    length // an ordinary comment ends this continued command
+//  ^^^^^^ meta.command.stata
+//  ^ - support.function.command.stata
+gear
+// <- support.function.command.stata
+
+order price weight ////
+    length gear
+//  ^^^^^^ meta.command.stata
 //  ^ - support.function.command.stata
 
 display r(mean) if (wage > 0)

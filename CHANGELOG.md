@@ -16,6 +16,7 @@
 
 ### Changed
 
+- Preserved Stata command highlighting across `///` and longer slash continuations.
 - Avoid xdotool's modifier snapshot/restore path during Linux delivery, preventing synthetic keys
   from remaining logically held and continuously resetting the desktop idle timer.
 - Selected Sublime Text's embedded Python 3.14 runtime explicitly.

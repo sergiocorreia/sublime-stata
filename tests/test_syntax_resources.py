@@ -70,6 +70,9 @@ class SyntaxResourceTests(unittest.TestCase):
             "ib(last).industry",
             "ib(freq).sector",
             "dtable income age ///",
+            "order price weight ///",
+            "order price weight ////",
+            "length // an ordinary comment ends this continued command",
             "#delimit ;\n// <- keyword.control.directive.stata\ndtable income age",
             "continuous(income, statistics(mean sd));",
             "mata: sqrt(4); collect clear;",
@@ -110,6 +113,26 @@ class SyntaxResourceTests(unittest.TestCase):
             context_body("delimiter-switch-to-semicolon"),
         )
         self.assertIn("pop: true", context_body("delimiter-switch-to-newline"))
+
+    def test_slash_continuations_preserve_the_newline_command_context(self) -> None:
+        syntax = (ROOT / "Stata.sublime-syntax").read_text(encoding="utf-8")
+
+        def context_body(name: str) -> str:
+            match = re.search(
+                rf"(?ms)^  {re.escape(name)}:\n(?P<body>.*?)(?=^  [A-Za-z][A-Za-z0-9-]*:|\Z)",
+                syntax,
+            )
+            self.assertIsNotNone(match, name)
+            return match.group("body")
+
+        comments = context_body("comments")
+        self.assertIn("- match: '///.*$'", comments)
+        self.assertIn("push: line-continuation", comments)
+        self.assertNotIn("(?:\\n|$)", comments)
+        continuation = context_body("line-continuation")
+        self.assertIn("meta_include_prototype: false", continuation)
+        self.assertIn("- match: '^'", continuation)
+        self.assertIn("pop: true", continuation)
 
     def test_embedded_languages_follow_the_active_delimiter(self) -> None:
         syntax = (ROOT / "Stata.sublime-syntax").read_text(encoding="utf-8")

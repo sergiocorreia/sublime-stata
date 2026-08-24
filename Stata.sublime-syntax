@@ -180,8 +180,9 @@ contexts:
         2: entity.name.section
     - match: '^\s*\*.*$'
       scope: comment.line.asterisk.stata
-    - match: '///.*(?:\n|$)'
+    - match: '///.*$'
       scope: comment.line.continuation.stata
+      push: line-continuation
     - match: '//.*$'
       scope: comment.line.double-slash.stata
     - match: '/\*'
@@ -195,6 +196,11 @@ contexts:
       push: block-comment
     - match: '\*/'
       scope: punctuation.definition.comment.end.stata
+      pop: true
+
+  line-continuation:
+    - meta_include_prototype: false
+    - match: '^'
       pop: true
 
   program-declarations:
