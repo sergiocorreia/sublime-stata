@@ -4,8 +4,8 @@
 
 The active-window build bridge currently supports Linux desktop sessions running X11. It controls a
 Stata GUI with `xdotool`, preserving an existing session's data and state, and starts the graphical
-executable from `PATH` when no compatible window is open. Sublime Text build 4205 or newer is required
-because this package selects the embedded Python 3.14 API environment.
+executable from `PATH` or `/usr/local/stata19` when no compatible window is open. Sublime Text build
+4205 or newer is required because this package selects the embedded Python 3.14 API environment.
 
 Sublime's own Python is used; do not install Python 3.14 or Python packages into the system interpreter
 for this package. See Sublime Text's official documentation for

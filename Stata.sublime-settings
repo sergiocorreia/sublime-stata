@@ -9,7 +9,8 @@
 	// window; "background" delivers without raising it.
 	"linux_delivery_mode": "activate_restore",
 	"linux_command_focus_keys": ["ctrl+1"],
-	// Used for window identity and automatic startup; MP is preferred.
+	// Used for window identity and automatic startup; MP is preferred. Bare
+	// names are also checked under /usr/local/stata19 when absent from PATH.
 	"linux_stata_executables": ["xstata-mp", "xstata-se", "xstata"],
 
 	// Extra directories searched for user/project ado completions.

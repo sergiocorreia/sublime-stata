@@ -13,12 +13,13 @@ This is why the submitted code can use the target window's current data, frames,
 and installed commands. It is also why Linux execution requires X11 and `xdotool`: Stata Automation
 is Windows-only, while batch mode creates a different Stata process.
 
-If no compatible window is visible, the backend starts a configured graphical executable from
-`PATH`. MP candidates are tried first, followed by the remaining `linux_stata_executables` entries in
-their configured order. The default preference is `xstata-mp`, `xstata-se`, then `xstata`. The backend
-waits up to 20 seconds for a visible GUI, allows a short initialization interval, and then performs the
-same one-time delivery sequence. Concurrent build jobs share a launch lock so they do not each start a
-new Stata process. This is a GUI launch, not a batch or PyStata fallback.
+If no compatible window is visible, the backend starts a configured graphical executable. For each
+candidate it checks `PATH`, then the conventional `/usr/local/stata19` installation directory. MP
+candidates are tried first, followed by the remaining `linux_stata_executables` entries in their
+configured order. The default preference is `xstata-mp`, `xstata-se`, then `xstata`. The backend waits
+up to 20 seconds for a visible GUI, allows a short initialization interval, and then performs the same
+one-time delivery sequence. Concurrent build jobs share a launch lock so they do not each start a new
+Stata process. This is a GUI launch, not a batch or PyStata fallback.
 
 ## Source preparation
 

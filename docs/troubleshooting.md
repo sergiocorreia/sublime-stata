@@ -40,10 +40,12 @@ native Wayland transport should be designed and tested separately.
 When no compatible window is visible, the package normally starts the first available graphical
 executable, preferring MP. If startup fails or times out:
 
-1. Confirm that the graphical executable—not console Stata—is on Sublime Text's inherited `PATH`:
+1. Confirm that the graphical executable—not console Stata—is on Sublime Text's inherited `PATH` or
+   in the conventional installation directory:
 
    ```sh
    command -v xstata-mp || command -v xstata-se || command -v xstata
+   test -x /usr/local/stata19/xstata-mp && echo /usr/local/stata19/xstata-mp
    ```
 
 2. If Stata is already running, confirm its process name:

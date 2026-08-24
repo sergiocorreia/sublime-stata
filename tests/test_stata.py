@@ -323,11 +323,37 @@ class XdotoolTests(unittest.TestCase):
             runner=lambda argv: Result(),
             which=lambda binary: "/usr/bin/xdotool" if binary == "xdotool" else None,
             modifiers_pressed=lambda: False,
+            install_dirs=(),
         )
         with self.assertRaisesRegex(
             stata.StataEnvironmentError, "No graphical Stata executable.*PATH"
         ):
             backend.launch_stata()
+
+    def test_launch_finds_the_local_stata19_installation_outside_path(self):
+        launches = []
+        with tempfile.TemporaryDirectory() as directory:
+            executable = Path(directory) / "xstata-mp"
+            executable.write_bytes(b"test executable")
+            executable.chmod(0o755)
+            backend = stata.XdotoolBackend(
+                env={"DISPLAY": ":0", "XDG_SESSION_TYPE": "x11"},
+                runner=lambda argv: Result(),
+                which=lambda binary: (
+                    "/usr/bin/xdotool" if binary == "xdotool" else
+                    "/opt/stata/xstata-se" if binary == "xstata-se" else None
+                ),
+                modifiers_pressed=lambda: False,
+                launcher=lambda argv: launches.append(argv),
+                install_dirs=(directory,),
+            )
+            resolved = backend.launch_stata()
+
+        self.assertEqual(resolved, str(executable))
+        self.assertEqual(launches, [[str(executable)]])
+
+    def test_default_install_dirs_include_this_machines_stata19_location(self):
+        self.assertIn("/usr/local/stata19", stata.DEFAULT_LINUX_INSTALL_DIRS)
 
     def test_launch_falls_back_when_mp_is_not_on_path(self):
         launches = []
@@ -346,6 +372,7 @@ class XdotoolTests(unittest.TestCase):
             which=which,
             modifiers_pressed=lambda: False,
             launcher=lambda argv: launches.append(argv),
+            install_dirs=(),
         )
         executable = backend.launch_stata()
         self.assertEqual(executable, "/opt/stata/xstata-se")

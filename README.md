@@ -4,8 +4,9 @@ A Sublime Text 4 package for writing and running Stata do-files, ado-files, and 
 
 The Linux build bridge runs selected code—or the full unsaved buffer when there is no selection—in a
 graphical Stata session. It reuses the chosen Stata GUI window when one is open. Otherwise, it starts
-the graphical executable available on `PATH`, preferring `xstata-mp`, and sends the pending code after
-the window appears. Existing session data, frames, globals, and installed commands stay available.
+the graphical executable available on `PATH` or under `/usr/local/stata19`, preferring `xstata-mp`,
+and sends the pending code after the window appears. Existing session data, frames, globals, and
+installed commands stay available.
 
 ## Highlights
 
@@ -24,7 +25,8 @@ the window appears. Existing session data, frames, globals, and installed comman
 
 - Sublime Text build 4205 or newer. The package explicitly uses Sublime's embedded Python 3.14
   environment; your system Python is unrelated.
-- A graphical Stata Linux executable on `PATH`, or an already-running compatible Stata GUI session.
+- A graphical Stata Linux executable on `PATH` or in `/usr/local/stata19`, or an already-running
+  compatible Stata GUI session.
 - Linux/X11 and [`xdotool`](https://github.com/jordansissel/xdotool) for the active-window bridge.
 
 Wayland does not provide the X11 window search and input facilities used by this bridge. Syntax,

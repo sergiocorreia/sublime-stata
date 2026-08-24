@@ -19,8 +19,8 @@ unchanged.
 
 The default Linux delivery mode briefly activates Stata, focuses its Command window, submits the
 temporary do-file, and restores Sublime Text. The command itself continues asynchronously in Stata.
-If no compatible GUI window is open, the package starts Stata from `PATH`, preferring the configured
-MP executable, waits for its window, and then submits the command.
+If no compatible GUI window is open, the package starts Stata from `PATH` or `/usr/local/stata19`,
+preferring the configured MP executable, waits for its window, and then submits the command.
 
 ## Choosing among Stata windows
 
@@ -106,8 +106,8 @@ Command window in the supported Linux GUI. After these configured keys, the brid
 
 Executable basenames or absolute paths used to identify compatible Stata GUI processes and to start
 Stata when none is open. The list remains an identity allowlist for existing windows. For automatic
-launch, MP entries are preferred and the remaining entries retain their configured order; basenames
-must be available on the `PATH` inherited by Sublime Text.
+launch, MP entries are preferred and the remaining entries retain their configured order. Basenames
+are resolved using the `PATH` inherited by Sublime Text and then `/usr/local/stata19`.
 
 ### `ado_paths`
 

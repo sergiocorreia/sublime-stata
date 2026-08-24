@@ -22,6 +22,7 @@ import uuid
 
 
 DEFAULT_LINUX_EXECUTABLES = ("xstata-mp", "xstata-se", "xstata")
+DEFAULT_LINUX_INSTALL_DIRS = ("/usr/local/stata19",)
 DEFAULT_COMMAND_FOCUS_KEYS = ("ctrl+1",)
 LINUX_STARTUP_TIMEOUT_SECONDS = 20.0
 LINUX_STARTUP_POLL_SECONDS = 0.2
@@ -421,7 +422,8 @@ class XdotoolBackend:
 
     def __init__(self, binary="xdotool", xprop_binary="xprop", env=None,
                  runner=None, which=None, process_executable=None, sleeper=None,
-                 modifiers_pressed=None, launcher=None):
+                 modifiers_pressed=None, launcher=None,
+                 install_dirs=DEFAULT_LINUX_INSTALL_DIRS):
         self.binary = binary
         self.xprop_binary = xprop_binary
         self.env = os.environ if env is None else env
@@ -431,6 +433,11 @@ class XdotoolBackend:
         self.sleep = sleeper or time.sleep
         self.modifiers_pressed = modifiers_pressed or self._x11_modifiers_pressed
         self.launcher = launcher or self._subprocess_launcher
+        if isinstance(install_dirs, (str, os.PathLike)):
+            install_dirs = (install_dirs,)
+        self.install_dirs = tuple(
+            str(directory) for directory in (install_dirs or ()) if directory
+        )
         self._launch_lock = threading.Lock()
         self._launched_processes = []
 
@@ -731,22 +738,38 @@ class XdotoolBackend:
             + [candidate for candidate in candidates if not is_mp(candidate)]
         )
 
+    def _resolve_launch_executable(self, candidate: str) -> str | None:
+        expanded = os.path.expandvars(os.path.expanduser(candidate))
+        executable = self.which(expanded)
+        if executable:
+            return executable
+        if os.path.basename(expanded) != expanded:
+            return None
+        for directory in self.install_dirs:
+            root = os.path.expandvars(os.path.expanduser(str(directory)))
+            path = os.path.join(root, expanded)
+            if os.path.isfile(path) and os.access(path, os.X_OK):
+                return path
+        return None
+
     def launch_stata(self, executables=DEFAULT_LINUX_EXECUTABLES) -> str:
-        """Start the preferred configured graphical Stata executable from PATH."""
+        """Start the preferred graphical Stata executable from known locations."""
 
         self.validate_environment()
         launch_order = self._launch_order(executables)
         executable = None
         for candidate in launch_order:
-            expanded = os.path.expandvars(os.path.expanduser(candidate))
-            executable = self.which(expanded)
+            executable = self._resolve_launch_executable(candidate)
             if executable:
                 break
         if not executable:
             expected = ", ".join(launch_order) or ", ".join(DEFAULT_LINUX_EXECUTABLES)
+            locations = "PATH"
+            if self.install_dirs:
+                locations += " or " + ", ".join(self.install_dirs)
             raise StataEnvironmentError(
-                "No graphical Stata executable was found in PATH. Tried: {}".format(
-                    expected
+                "No graphical Stata executable was found in {}. Tried: {}".format(
+                    locations, expected
                 )
             )
         try:
